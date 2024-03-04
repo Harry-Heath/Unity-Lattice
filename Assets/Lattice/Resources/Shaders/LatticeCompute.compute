@@ -234,10 +234,6 @@ void Deform(uint id: SV_DispatchThreadID)
 	float stretchBinormal = length(binormalPosition - position) * 100;
 	float2 stretch = originalStretch * float2(stretchTangent, stretchBinormal);
 
-	// Lerp :)
-	//float3 oldPosition = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
-	//position = lerp(oldPosition, position, 0.1f);
-
 	VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(position));
 	VertexBuffer.Store3(id * BufferStride + NormalOffset, asuint(normal));
 	VertexBuffer.Store3(id * BufferStride + TangentOffset, asuint(tangent));

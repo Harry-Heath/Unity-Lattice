@@ -282,6 +282,49 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: Container/Anvil (1)
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: {x: 0.734, y: 0.5, z: 0.024}
+        inSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: 0, y: 0, z: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      - serializedVersion: 3
+        time: 0.4
+        value: {x: 0.8711383, y: 0.31554204, z: -0.2927488}
+        inSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: 0, y: 0, z: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      - serializedVersion: 3
+        time: 0.6
+        value: {x: 0.83145976, y: 0.32097107, z: -0.2514479}
+        inSlope: {x: -0.3283739, y: 0, z: 0.34180075}
+        outSlope: {x: -0.3283739, y: 0, z: 0.34180075}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      - serializedVersion: 3
+        time: 0.8833333
+        value: {x: 0.707, y: 0.32097107, z: 0.069}
+        inSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: 0, y: 0, z: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    path: Container/Anvil Lattice/Handle (2, 1, 0)
   m_ScaleCurves: []
   m_FloatCurves:
   - curve:
@@ -3824,6 +3867,13 @@ AnimationClip:
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
+      path: 939744153
+      attribute: 1
+      script: {fileID: 0}
+      typeID: 4
+      customType: 0
+      isPPtrCurve: 0
+    - serializedVersion: 2
       path: 644331941
       attribute: 4
       script: {fileID: 0}
@@ -3839,567 +3889,567 @@ AnimationClip:
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2945936699
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2945936699
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2945936699
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 555248344
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 555248344
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 555248344
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2226798328
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2226798328
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2226798328
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 171260187
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 171260187
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 171260187
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3987892806
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3987892806
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3987892806
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1664970149
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1664970149
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1664970149
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3332323717
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3332323717
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3332323717
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2465678475
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2465678475
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2465678475
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3118077768
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3118077768
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3118077768
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 928321707
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 928321707
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 928321707
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 477643624
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 477643624
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 477643624
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 321783898
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 321783898
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 321783898
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2644578233
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2644578233
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 2644578233
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3749972164
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3749972164
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3749972164
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1359679271
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1359679271
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1359679271
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3062652026
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3062652026
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3062652026
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 939744153
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 939744153
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 939744153
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1209024102
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1209024102
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 1209024102
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 4104739591
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 4104739591
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 4104739591
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3840570870
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3840570870
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3840570870
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 4260447415
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 4260447415
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 4260447415
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3649723462
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3649723462
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3649723462
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3230756103
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3230756103
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 3230756103
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 675313000
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 675313000
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 675313000
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 828064809
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 828064809
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 828064809
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 354442456
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 354442456
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 354442456
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 205221273
-      attribute: 3226013702
+      attribute: 4001977702
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 205221273
-      attribute: 3075350672
+      attribute: 2576246256
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 205221273
-      attribute: 776433962
+      attribute: 8860746
       script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
       typeID: 114
       customType: 0
@@ -8735,6 +8785,144 @@ AnimationClip:
     path: Container/Cartoon Car/Squash Lattice/Handle (1, 1, 1)
     classID: 114
     script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.734
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4
+        value: 0.8711383
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6
+        value: 0.83145976
+        inSlope: -0.3283739
+        outSlope: -0.3283739
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8833333
+        value: 0.707
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalPosition.x
+    path: Container/Anvil Lattice/Handle (2, 1, 0)
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.5
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4
+        value: 0.31554204
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6
+        value: 0.32097107
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8833333
+        value: 0.32097107
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalPosition.y
+    path: Container/Anvil Lattice/Handle (2, 1, 0)
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.024
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4
+        value: -0.2927488
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6
+        value: -0.2514479
+        inSlope: 0.34180075
+        outSlope: 0.34180075
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8833333
+        value: 0.069
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalPosition.z
+    path: Container/Anvil Lattice/Handle (2, 1, 0)
+    classID: 4
+    script: {fileID: 0}
   m_EulerEditorCurves:
   - curve:
       serializedVersion: 2

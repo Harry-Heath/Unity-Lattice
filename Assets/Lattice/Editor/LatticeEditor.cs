@@ -70,7 +70,8 @@ namespace Heath.Lattice.Editor
 
 						if (newPosition != handlePosition)
 						{
-							Undo.RecordObject(lattice.GetHandle(i, j, k), "Edited lattice handle");
+							//Undo.RecordObject(lattice.GetHandle(i, j, k), "Edited lattice handle");
+							Undo.RecordObject(lattice.GetHandle(i, j, k).transform, "Edited lattice handle");
 							lattice.SetHandlePosition(i, j, k, newPosition);
 
 							EditorApplication.QueuePlayerLoopUpdate();
@@ -82,7 +83,7 @@ namespace Heath.Lattice.Editor
 			Handles.zTest = previousZTest;
 		}
 
-		private static void DrawLattice(Lattice lattice, Color color, CompareFunction compareFunction)
+		internal static void DrawLattice(Lattice lattice, Color color, CompareFunction compareFunction)
 		{
 			CompareFunction previousZTest = Handles.zTest;
 			Handles.zTest = compareFunction;

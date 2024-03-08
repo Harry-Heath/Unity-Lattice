@@ -23,7 +23,7 @@ namespace Heath.Lattice
 				if (_offsets.Count != _handles.Count)
 				{
 					_offsets.Clear();
-					_offsets.AddRange(_handles.Select(h => h.offset));
+					_offsets.AddRange(_handles.Select(h => h.Offset));
 				}
 				
 				return _offsets;
@@ -59,17 +59,21 @@ namespace Heath.Lattice
 					{
 						GameObject childObject = new($"Handle ({i}, {j}, {k})");
 						childObject.transform.parent = transform;
-						childObject.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-						childObject.hideFlags |= HideFlags.HideInHierarchy;
+						//childObject.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+						//childObject.hideFlags |= HideFlags.HideInHierarchy;
 
 						LatticeHandle handle = childObject.AddComponent<LatticeHandle>();
+						handle.Lattice = this;
+						handle.Coords = new(i, j, k);
+						handle.Offset = Vector3.zero;
+
 						_handles.Add(handle);
 					}
 				}
 			}
 		}
 
-		private Vector3 GetBasePosition(int x, int y, int z)
+		internal Vector3 GetBasePosition(int x, int y, int z)
 		{
 			return new Vector3(
 				x / (_resolution.x - 1f),
@@ -85,22 +89,22 @@ namespace Heath.Lattice
 
 		public Vector3 GetHandleOffset(int x, int y, int z)
 		{
-			return _handles[GetIndex(x, y, z)].offset;
+			return _handles[GetIndex(x, y, z)].Offset;
 		}
 
 		public void SetHandleOffset(int x, int y, int z, Vector3 offset)
 		{
-			_handles[GetIndex(x, y, z)].offset = offset;
+			_handles[GetIndex(x, y, z)].Offset = offset;
 		}
 
 		public Vector3 GetHandlePosition(int x, int y, int z)
 		{
-			return _handles[GetIndex(x, y, z)].offset + GetBasePosition(x, y, z);
+			return _handles[GetIndex(x, y, z)].Position;
 		}
 
 		public void SetHandlePosition(int x, int y, int z, Vector3 position)
 		{
-			_handles[GetIndex(x, y, z)].offset = position - GetBasePosition(x, y, z);
+			_handles[GetIndex(x, y, z)].Position = position;
 		}
 
 		public void Setup(int x, int y, int z) => Setup(new Vector3Int(x, y, z));
@@ -113,7 +117,7 @@ namespace Heath.Lattice
 			{
 				for (int i = 0; i < _handles.Count; i++)
 				{
-					_offsets[i] = _handles[i].offset;
+					_offsets[i] = _handles[i].Offset;
 				}
 			}
 		}

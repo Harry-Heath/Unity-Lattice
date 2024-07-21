@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Heath.Lattice.Editor
+namespace Lattice.Editor
 {
 	[CustomEditor(typeof(Lattice))]
 	public class LatticeEditor : UnityEditor.Editor

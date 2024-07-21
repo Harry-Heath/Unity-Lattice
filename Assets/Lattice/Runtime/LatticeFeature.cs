@@ -1,25 +1,28 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
-namespace Heath.Lattice
+namespace Lattice
 {
 	public static class LatticeFeature
 	{
+		private const int MaxHandles = 1024;
+
 		private static bool _init = false;
+
 		private static ComputeShader _compute;
+		private static ComputeBuffer _latticeBuffer;
 		private static readonly List<LatticeModifier> _modifiers = new();
 		private static readonly List<SkinnedLatticeModifier> _skinnedModifiers = new();
 
-		private static ComputeBuffer _latticeBuffer;
-
+		/// <summary>
+		/// The compute shader used to calculate lattice deformations
+		/// </summary>
 		public static ComputeShader Compute
 		{
 			get
@@ -32,32 +35,52 @@ namespace Heath.Lattice
 			}
 		}
 
+		/// <summary>
+		/// Enqueues a lattice modifier
+		/// </summary>
+		public static void Enqueue(LatticeModifier modifier)
+		{
+			_modifiers.Add(modifier);
+		}
+
+		/// <summary>
+		/// Enqueues a skinned lattice modifer
+		/// </summary>
+		public static void Enqueue(SkinnedLatticeModifier modifier)
+		{
+			_modifiers.Add(modifier);
+			_skinnedModifiers.Add(modifier);
+		}
+
+		/// <summary>
+		/// Sets up the modifiers as part of the player loop
+		/// </summary>
 		[RuntimeInitializeOnLoadMethod]
-		[InitializeOnLoadMethod]
+#if UNITY_EDITOR
+		[UnityEditor.InitializeOnLoadMethod]
+#endif
 		private static void Initialize()
 		{
 			if (_init) return;
 
-			Debug.Log($"Initialize -> isPlaying:{Application.isPlaying}");
+#if UNITY_EDITOR
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += OnSceneSaving;
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaved += OnSceneSaved;
+			UnityEditor.EditorApplication.playModeStateChanged += OnStateChanged;
 
-			EditorSceneManager.sceneSaving += OnSceneSaving;
-			EditorSceneManager.sceneSaved += OnSceneSaved;
-			EditorApplication.playModeStateChanged += OnStateChanged;
-
-			if (!Application.isEditor)
-			{
-				Application.quitting += OnQuitting;
-			}
-			else
-			{
-				Application.quitting += Reset;
-				AssemblyReloadEvents.beforeAssemblyReload += OnQuitting;
-				EditorApplication.quitting += OnQuitting;
-			}
+			Application.quitting += Reset;
+			UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += OnQuitting;
+			UnityEditor.EditorApplication.quitting += OnQuitting;
+#else
+			Application.quitting += OnQuitting;
+#endif
 
 			_init = true;
-			_latticeBuffer = new(1024, 3 * sizeof(float));
 
+			// Create the buffer for storing lattice information
+			_latticeBuffer = new(MaxHandles, 3 * sizeof(float));
+
+			// Update the player loop to include lattice modifier
 			var loop = PlayerLoop.GetCurrentPlayerLoop();
 
 			int postLateUpdateIndex = Array.FindIndex(loop.subSystemList, dd => dd.type == typeof(PostLateUpdate));
@@ -83,65 +106,30 @@ namespace Heath.Lattice
 
 			PlayerLoop.SetPlayerLoop(loop);
 		}
-		
-		private static void OnStateChanged(PlayModeStateChange obj)
-		{
-			if (obj == PlayModeStateChange.ExitingEditMode)
-			{
-				LatticeModifier[] components = GameObject.FindObjectsOfType<LatticeModifier>();
-
-				for (int i = 0; i < components.Length; i++)
-				{
-					if (components[i].isActiveAndEnabled) components[i].ResetMesh();
-				}
-			}
-		}
-
-		private static void OnSceneSaved(UnityEngine.SceneManagement.Scene scene)
-		{
-			LatticeModifier[] components = GameObject.FindObjectsOfType<LatticeModifier>();
-
-			for (int i = 0; i < components.Length; i++)
-			{
-				if (components[i].isActiveAndEnabled) components[i].ApplyMesh();
-			}
-		}
-
-		private static void OnSceneSaving(UnityEngine.SceneManagement.Scene scene, string path)
-		{
-			LatticeModifier[] components = GameObject.FindObjectsOfType<LatticeModifier>();
-
-			for (int i = 0; i < components.Length; i++)
-			{
-				if (components[i].isActiveAndEnabled) components[i].ResetMesh();
-			}
-		}
 
 		private static void OnQuitting()
 		{
-			Debug.Log($"OnQuitting -> isPlaying:{Application.isPlaying}");//
+#if UNITY_EDITOR
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving -= OnSceneSaving;
+			UnityEditor.SceneManagement.EditorSceneManager.sceneSaved -= OnSceneSaved;
+			UnityEditor.EditorApplication.playModeStateChanged -= OnStateChanged;
 
-			EditorSceneManager.sceneSaving -= OnSceneSaving;
-			EditorSceneManager.sceneSaved -= OnSceneSaved;
-			EditorApplication.playModeStateChanged -= OnStateChanged;
+			Application.quitting -= Reset;
+			UnityEditor.AssemblyReloadEvents.beforeAssemblyReload -= OnQuitting;
+			UnityEditor.EditorApplication.quitting -= OnQuitting;
+#else
+			Application.quitting -= OnQuitting;
+#endif
 
-			if (!Application.isEditor)
-			{
-				Application.quitting -= OnQuitting;
-			}
-			else
-			{
-				Application.quitting -= Reset;
-				AssemblyReloadEvents.beforeAssemblyReload -= OnQuitting;
-				EditorApplication.quitting -= OnQuitting;
-			}
-
+			// Release the lattice buffer
 			_latticeBuffer?.Release();
 			_latticeBuffer = null;
-
+			
+			// Clear existing modifiers
 			_modifiers.Clear();
 			_skinnedModifiers.Clear();
 
+			// Remove lattice modifier from player loop
 			var loop = PlayerLoop.GetCurrentPlayerLoop();
 
 			int postLateUpdateIndex = Array.FindIndex(loop.subSystemList, dd => dd.type == typeof(PostLateUpdate));
@@ -160,6 +148,7 @@ namespace Heath.Lattice
 
 		private static void Reset()
 		{
+			// Refresh modifier system
 			OnQuitting();
 			Initialize();
 		}
@@ -168,7 +157,7 @@ namespace Heath.Lattice
 		{
 			if (_modifiers.Count == 0 || _latticeBuffer == null) return;
 
-			CommandBuffer cmd = GetCommandBuffer("Lattice");
+			CommandBuffer cmd = CommandBufferPool.Get("Lattice");
 
 			for (int i = 0; i < _modifiers.Count; i++)
 			{
@@ -176,7 +165,7 @@ namespace Heath.Lattice
 			}
 
 			Graphics.ExecuteCommandBuffer(cmd);
-			ReleaseCommandBuffer(cmd);
+			CommandBufferPool.Release(cmd);
 
 			_modifiers.Clear();
 		}
@@ -185,7 +174,7 @@ namespace Heath.Lattice
 		{
 			if (_skinnedModifiers.Count == 0 || _latticeBuffer == null) return;
 
-			CommandBuffer cmd = GetCommandBuffer("Skinned Lattice");
+			CommandBuffer cmd = CommandBufferPool.Get("Skinned Lattice");
 
 			for (int i = 0; i < _skinnedModifiers.Count; i++)
 			{
@@ -193,30 +182,44 @@ namespace Heath.Lattice
 			}
 
 			Graphics.ExecuteCommandBuffer(cmd);
-			ReleaseCommandBuffer(cmd);
+			CommandBufferPool.Release(cmd);
 
 			_skinnedModifiers.Clear();
 		}
 
-		public static void Enqueue(LatticeModifier modifier)
+#if UNITY_EDITOR
+		private static void OnStateChanged(UnityEditor.PlayModeStateChange state)
 		{
-			_modifiers.Add(modifier);
+			if (state == UnityEditor.PlayModeStateChange.ExitingEditMode)
+			{
+				LatticeModifier[] components = GameObject.FindObjectsOfType<LatticeModifier>();
+
+				for (int i = 0; i < components.Length; i++)
+				{
+					if (components[i].isActiveAndEnabled) components[i].ResetMesh();
+				}
+			}
 		}
 
-		public static void Enqueue(SkinnedLatticeModifier modifier)
+		private static void OnSceneSaved(Scene scene)
 		{
-			_modifiers.Add(modifier);
-			_skinnedModifiers.Add(modifier);
+			LatticeModifier[] components = GameObject.FindObjectsOfType<LatticeModifier>();
+
+			for (int i = 0; i < components.Length; i++)
+			{
+				if (components[i].isActiveAndEnabled) components[i].ApplyMesh();
+			}
 		}
 
-		private static CommandBuffer GetCommandBuffer(string name)
+		private static void OnSceneSaving(Scene scene, string path)
 		{
-			return CommandBufferPool.Get(name);
-		}
+			LatticeModifier[] components = GameObject.FindObjectsOfType<LatticeModifier>();
 
-		private static void ReleaseCommandBuffer(CommandBuffer cmd)
-		{
-			CommandBufferPool.Release(cmd);
+			for (int i = 0; i < components.Length; i++)
+			{
+				if (components[i].isActiveAndEnabled) components[i].ResetMesh();
+			}
 		}
+#endif
 	}
 }

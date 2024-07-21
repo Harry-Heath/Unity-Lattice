@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Heath.Lattice.Editor
+namespace Lattice.Editor
 {
 	[System.Serializable]
 	internal class LatticeSettings : ScriptableObject

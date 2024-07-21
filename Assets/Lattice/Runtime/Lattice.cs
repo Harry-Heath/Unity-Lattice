@@ -1,21 +1,33 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Heath.Lattice
+namespace Lattice
 {
 	[ExecuteAlways]
 	public class Lattice : MonoBehaviour
 	{
 		[SerializeField] internal Vector3Int _resolution = new(2, 2, 2);
 		[SerializeField] internal List<LatticeHandle> _handles = new();
+
 		private readonly List<Vector3> _offsets = new();
 
+		/// <summary>
+		/// The lattice's handles. These are created when the lattice is setup.
+		/// </summary>
 		public IReadOnlyList<LatticeHandle> Handles => _handles;
+
+		/// <summary>
+		/// The resolution of the lattice.<br/>
+		/// To change this use <see cref="Setup(Vector3Int)"/>
+		/// </summary>
 		public Vector3Int Resolution => _resolution;
 
+		/// <summary>
+		/// The offsets to be used in deformation.<br/>
+		/// These are automatically updated as part of <see cref="LateUpdate"/>.<br/>
+		/// To manually set them use <see cref="SetHandleOffset(int, int, int, Vector3)"/>
+		/// </summary>
 		public List<Vector3> Offsets
 		{
 			get
@@ -30,9 +42,14 @@ namespace Heath.Lattice
 			}
 		}
 
+		/// <summary>
+		/// Setups the lattice for the desired resolution
+		/// </summary>
+		/// <param name="resolution">The desired resolution</param>
 		public void Setup(Vector3Int resolution)
 		{
-			var existingHandles = GetComponentsInChildren<LatticeHandle>();
+			// Delete existing handles
+			LatticeHandle[] existingHandles = GetComponentsInChildren<LatticeHandle>();
 			for (int i = 0; i < existingHandles.Length; i++)
 			{
 				if (existingHandles[i] != null)
@@ -48,9 +65,11 @@ namespace Heath.Lattice
 				}
 			}
 
+			// Update resolution
 			_resolution = resolution;
-			_handles.Clear();
 
+			// Create new handles
+			_handles.Clear();
 			for (int k = 0; k < _resolution.z; k++)
 			{
 				for (int j = 0; j < _resolution.y; j++)
@@ -69,7 +88,10 @@ namespace Heath.Lattice
 			}
 		}
 
-		private Vector3 GetBasePosition(int x, int y, int z)
+		/// <summary>
+		/// Gets the position of a handle before any offset
+		/// </summary>
+		public Vector3 GetBasePosition(int x, int y, int z)
 		{
 			return new Vector3(
 				x / (_resolution.x - 1f),
@@ -78,31 +100,47 @@ namespace Heath.Lattice
 			);
 		}
 
+		/// <summary>
+		/// Gets the handle by index. Index will be clamped to resolution
+		/// </summary>
 		public LatticeHandle GetHandle(int x, int y, int z)
 		{
 			return _handles[GetIndex(x, y, z)];
 		}
 
+		/// <summary>
+		/// Gets the current offset from the handle's base position
+		/// </summary>
 		public Vector3 GetHandleOffset(int x, int y, int z)
 		{
 			return _handles[GetIndex(x, y, z)].offset;
 		}
 
+		/// <summary>
+		/// Set the offset of a handle relative to it's base position
+		/// </summary>
 		public void SetHandleOffset(int x, int y, int z, Vector3 offset)
 		{
 			_handles[GetIndex(x, y, z)].offset = offset;
 		}
 
+		/// <summary>
+		/// Gets the position of a handle including current offset
+		/// </summary>
 		public Vector3 GetHandlePosition(int x, int y, int z)
 		{
 			return _handles[GetIndex(x, y, z)].offset + GetBasePosition(x, y, z);
 		}
 
+		/// <summary>
+		/// Set the position of a handle using a local transform position
+		/// </summary>
 		public void SetHandlePosition(int x, int y, int z, Vector3 position)
 		{
 			_handles[GetIndex(x, y, z)].offset = position - GetBasePosition(x, y, z);
 		}
 
+		/// <inheritdoc cref="Setup(Vector3Int)"/>
 		public void Setup(int x, int y, int z) => Setup(new Vector3Int(x, y, z));
 
 		private int GetIndex(int x, int y, int z) => x + _resolution.x * y + _resolution.x * _resolution.y * z;

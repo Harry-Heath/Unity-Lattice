@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Heath.Lattice
+namespace Lattice
 {
 	public static class LatticeShaderProperties
 	{

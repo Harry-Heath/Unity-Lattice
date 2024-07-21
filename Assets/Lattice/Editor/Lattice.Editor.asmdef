@@ -1,6 +1,6 @@
 {
-    "name": "Heath.Lattice.Editor",
-    "rootNamespace": "Heath.Lattice.Editor",
+    "name": "Lattice.Editor",
+    "rootNamespace": "Lattice.Editor",
     "references": [
         "GUID:fb586021af4897d4dbbdf5c6f4b384ea"
     ],

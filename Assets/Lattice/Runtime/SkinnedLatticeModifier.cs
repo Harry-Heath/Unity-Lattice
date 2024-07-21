@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Heath.Lattice
+namespace Lattice
 {
 	[ExecuteAlways, DisallowMultipleComponent]
 	public class SkinnedLatticeModifier : LatticeModifier

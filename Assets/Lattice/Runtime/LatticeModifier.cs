@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Heath.Lattice
+namespace Lattice
 {
 	[ExecuteAlways, DisallowMultipleComponent]
 	public class LatticeModifier : MonoBehaviour
@@ -35,6 +33,7 @@ namespace Heath.Lattice
 
 		protected Mesh Mesh => _mesh;
 
+		// TODO: should cache this stuff...
 		protected int VertexCount => Mesh.vertexCount;
 		protected int BufferStride => Mesh.GetVertexBufferStride(0);
 		protected int PositionOffset => Mesh.GetVertexAttributeOffset(VertexAttribute.Position);
@@ -94,6 +93,8 @@ namespace Heath.Lattice
 			_mesh.hideFlags |= HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
 			_mesh.name = sharedMesh.name + " (Lattice)";
 
+			// Stretch and squish data.
+			// TODO: explain this
 			Vector2[] d = new Vector2[_mesh.vertexCount];
 			Array.Fill(d, Vector2.one);
 			_mesh.SetUVs(3, d);
@@ -167,7 +168,6 @@ namespace Heath.Lattice
 		protected virtual Mesh GetMesh() => MeshFilter.sharedMesh;
 		protected virtual void SetMesh(Mesh mesh)
 		{
-			Debug.Log($"Setting mesh to {mesh.name}");
 			MeshFilter.sharedMesh = mesh;
 		}
 

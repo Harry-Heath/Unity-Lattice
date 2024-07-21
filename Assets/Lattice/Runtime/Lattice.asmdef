@@ -1,6 +1,6 @@
 {
-    "name": "Heath.Lattice",
-    "rootNamespace": "Heath.Lattice",
+    "name": "Lattice",
+    "rootNamespace": "Lattice",
     "references": [
         "GUID:df380645f10b7bc4b97d4f5eb6303d95"
     ],

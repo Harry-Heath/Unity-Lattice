@@ -1,6 +1,6 @@
 
-# Lattice Deformer for Unity 2021.3.5f1
-Should work in other versions, but haven't tested it.
+# Lattice Deformer for Unity
+Built and tested with Unity 2021.3.5f1. Should work in other versions, but haven't tested it.
 
 Adds 3 components `Lattice`, `LatticeModifier` and `SkinnedLatticeModifier` for creating lattice deformations.
 

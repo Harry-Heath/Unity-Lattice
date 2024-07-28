@@ -7,33 +7,23 @@ using UnityEngine.PlayerLoop;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
+using static Lattice.LatticeShaderProperties;
+
 namespace Lattice
 {
 	public static class LatticeFeature
 	{
-		private const int MaxHandles = 1024;
+		// Max number of handles supported
+		public const int MaxHandles = 1024;
 
 		private static bool _init = false;
 
 		private static ComputeShader _compute;
+		private static uint _computeGroupSize;
+
 		private static ComputeBuffer _latticeBuffer;
 		private static readonly List<LatticeModifier> _modifiers = new();
 		private static readonly List<SkinnedLatticeModifier> _skinnedModifiers = new();
-
-		/// <summary>
-		/// The compute shader used to calculate lattice deformations
-		/// </summary>
-		public static ComputeShader Compute
-		{
-			get
-			{
-				if (_compute == null)
-				{
-					_compute = Resources.Load<ComputeShader>("Shaders/LatticeCompute");
-				}
-				return _compute;
-			}
-		}
 
 		/// <summary>
 		/// Enqueues a lattice modifier
@@ -63,6 +53,10 @@ namespace Lattice
 		{
 			if (_init) return;
 
+			_compute = Resources.Load<ComputeShader>("Shaders/LatticeCompute");
+
+			if (_compute == null) return;
+
 #if UNITY_EDITOR
 			UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += OnSceneSaving;
 			UnityEditor.SceneManagement.EditorSceneManager.sceneSaved += OnSceneSaved;
@@ -79,6 +73,10 @@ namespace Lattice
 
 			// Create the buffer for storing lattice information
 			_latticeBuffer = new(MaxHandles, 3 * sizeof(float));
+
+			// Setup compute
+			_compute.GetKernelThreadGroupSizes(0, out _computeGroupSize, out uint _, out uint _);
+			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
 
 			// Update the player loop to include lattice modifier
 			var loop = PlayerLoop.GetCurrentPlayerLoop();
@@ -157,34 +155,95 @@ namespace Lattice
 		{
 			if (_modifiers.Count == 0 || _latticeBuffer == null) return;
 
-			CommandBuffer cmd = CommandBufferPool.Get("Lattice");
+			// Get command buffer
+			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifier");
 
+			// Apply all modifiers
 			for (int i = 0; i < _modifiers.Count; i++)
 			{
-				_modifiers[i].Execute(cmd, Compute, _latticeBuffer);
+				ApplyModifier(cmd, _modifiers[i]);
 			}
-
+			
+			// Execute
 			Graphics.ExecuteCommandBuffer(cmd);
 			CommandBufferPool.Release(cmd);
 
+			// Clear modifier queue
 			_modifiers.Clear();
+		}
+
+		private static readonly int[] _resolution = new int[3];
+
+		private static void ApplyModifier(CommandBuffer cmd, LatticeModifier modifier)
+		{
+			if (modifier == null || !modifier.IsValid) return;
+
+			// Enable or disable high quality
+			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);
+
+			// Copy original buffer back onto vertex buffer
+			cmd.CopyBuffer(modifier.CopyBuffer, modifier.VertexBuffer);
+			
+			// Setup vertex buffer
+			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.VertexBuffer);
+
+			// Setup mesh info
+			MeshInfo info = modifier.MeshInfo;
+			cmd.SetComputeIntParam(_compute, VertexCountId,    info.VertexCount);
+			cmd.SetComputeIntParam(_compute, BufferStrideId,   info.BufferStride);
+			cmd.SetComputeIntParam(_compute, PositionOffsetId, info.PositionOffset);
+			cmd.SetComputeIntParam(_compute, NormalOffsetId,   info.NormalOffset);
+			cmd.SetComputeIntParam(_compute, TangentOffsetId,  info.TangentOffset);
+			cmd.SetComputeIntParam(_compute, StretchOffsetId,  info.StretchOffset);
+			
+			// Apply lattices
+			List<Lattice> lattices = modifier.Lattices;
+			for (int i = 0; i < lattices.Count; i++)
+			{
+				Lattice lattice = lattices[i];
+
+				// Setup lattice parameters
+				Matrix4x4 objectToLattice = lattice.transform.worldToLocalMatrix * modifier.LocalToWorld;
+				Matrix4x4 latticeToObject = objectToLattice.inverse;
+
+				cmd.SetComputeMatrixParam(_compute, ObjectToLatticeId, objectToLattice);
+				cmd.SetComputeMatrixParam(_compute, LatticeToObjectId, latticeToObject);
+
+				_resolution[0] = lattice._resolution.x;
+				_resolution[1] = lattice._resolution.y;
+				_resolution[2] = lattice._resolution.z;
+				cmd.SetComputeIntParams(_compute, LatticeResolutionId, _resolution);
+
+				// Setup lattice offsets
+				cmd.SetBufferData(_latticeBuffer, lattice.Offsets);
+
+				// Apply lattice
+				cmd.DispatchCompute(_compute, 0, info.VertexCount / (int)_computeGroupSize + 1, 1, 1);
+			}
+		}
+
+		private static void ApplySkinnedModifier(CommandBuffer cmd, SkinnedLatticeModifier modifier)
+		{
+			if (modifier == null) return;
+
+
 		}
 
 		private static void ApplySkinnedModifiers()
 		{
-			if (_skinnedModifiers.Count == 0 || _latticeBuffer == null) return;
+			//if (_skinnedModifiers.Count == 0 || _latticeBuffer == null) return;
 
-			CommandBuffer cmd = CommandBufferPool.Get("Skinned Lattice");
+			//CommandBuffer cmd = CommandBufferPool.Get("Skinned Lattice");
 
-			for (int i = 0; i < _skinnedModifiers.Count; i++)
-			{
-				_skinnedModifiers[i].ExecuteSkinned(cmd, Compute, _latticeBuffer);
-			}
+			//for (int i = 0; i < _skinnedModifiers.Count; i++)
+			//{
+			//	_skinnedModifiers[i].ExecuteSkinned(cmd, Compute, _latticeBuffer);
+			//}
 
-			Graphics.ExecuteCommandBuffer(cmd);
-			CommandBufferPool.Release(cmd);
+			//Graphics.ExecuteCommandBuffer(cmd);
+			//CommandBufferPool.Release(cmd);
 
-			_skinnedModifiers.Clear();
+			//_skinnedModifiers.Clear();
 		}
 
 #if UNITY_EDITOR

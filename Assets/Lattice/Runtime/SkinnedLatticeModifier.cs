@@ -53,45 +53,45 @@ namespace Lattice
 			}
 		}
 
-		protected override bool Valid => base.Valid && SkinnedVertexBuffer != null;
+		//protected override bool IsValid => base.IsValid && SkinnedVertexBuffer != null;
 
-		public void ExecuteSkinned(CommandBuffer cmd, ComputeShader compute, ComputeBuffer latticeBuffer)
-		{
-			if (this == null) return;
+		//public void ExecuteSkinned(CommandBuffer cmd, ComputeShader compute, ComputeBuffer latticeBuffer)
+		//{
+		//	if (this == null) return;
 
-			if (HighQuality) cmd.EnableShaderKeyword("LATTICE_HIGH_QUALITY");
-			else cmd.DisableShaderKeyword("LATTICE_HIGH_QUALITY");
+		//	if (HighQuality) cmd.EnableShaderKeyword("LATTICE_HIGH_QUALITY");
+		//	else cmd.DisableShaderKeyword("LATTICE_HIGH_QUALITY");
 
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.VertexCount, VertexCount);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.BufferStride, BufferStride);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.PositionOffset, PositionOffset);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.NormalOffset, NormalOffset);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.TangentOffset, TangentOffset);
+		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.VertexCount, VertexCount);
+		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.BufferStride, BufferStride);
+		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.PositionOffset, PositionOffset);
+		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.NormalOffset, NormalOffset);
+		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.TangentOffset, TangentOffset);
 
-			cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.VertexBuffer, SkinnedVertexBuffer);
-			cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.OriginalBuffer, OriginalBuffer);
-			cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.LatticeBuffer, latticeBuffer);
+		//	cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.VertexBuffer, SkinnedVertexBuffer);
+		//	cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.OriginalBuffer, CopyBuffer);
+		//	cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.LatticeBuffer, latticeBuffer);
 
-			compute.GetKernelThreadGroupSizes(1, out uint x, out uint _, out uint _);
+		//	compute.GetKernelThreadGroupSizes(1, out uint x, out uint _, out uint _);
 
-			for (int i = 0; i < _skinnedLattices.Count; i++)
-			{
-				Matrix4x4 objectToLattice = _skinnedLattices[i].transform.worldToLocalMatrix * SkinnedLocalToWorld;
-				Matrix4x4 latticeToObject = objectToLattice.inverse;
+		//	for (int i = 0; i < _skinnedLattices.Count; i++)
+		//	{
+		//		Matrix4x4 objectToLattice = _skinnedLattices[i].transform.worldToLocalMatrix * SkinnedLocalToWorld;
+		//		Matrix4x4 latticeToObject = objectToLattice.inverse;
 
-				cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.ObjectToLattice, objectToLattice);
-				cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.LatticeToObject, latticeToObject);
+		//		cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.ObjectToLattice, objectToLattice);
+		//		cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.LatticeToObject, latticeToObject);
 
-				_resolution[0] = _skinnedLattices[i]._resolution.x;
-				_resolution[1] = _skinnedLattices[i]._resolution.y;
-				_resolution[2] = _skinnedLattices[i]._resolution.z;
-				cmd.SetComputeIntParams(compute, LatticeShaderProperties.LatticeResolution, _resolution);
+		//		_resolution[0] = _skinnedLattices[i]._resolution.x;
+		//		_resolution[1] = _skinnedLattices[i]._resolution.y;
+		//		_resolution[2] = _skinnedLattices[i]._resolution.z;
+		//		cmd.SetComputeIntParams(compute, LatticeShaderProperties.LatticeResolution, _resolution);
 
-				cmd.SetBufferData(latticeBuffer, _skinnedLattices[i].Offsets);
+		//		cmd.SetBufferData(latticeBuffer, _skinnedLattices[i].Offsets);
 
-				cmd.DispatchCompute(compute, 1, VertexCount / (int)x + 1, 1, 1);//
-			}
-		}
+		//		cmd.DispatchCompute(compute, 1, VertexCount / (int)x + 1, 1, 1);//
+		//	}
+		//}
 
 		protected override Mesh GetMesh() => MeshRenderer.sharedMesh;
 		protected override void SetMesh(Mesh mesh) => MeshRenderer.sharedMesh = mesh;

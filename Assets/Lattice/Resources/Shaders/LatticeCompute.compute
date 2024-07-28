@@ -1,6 +1,6 @@
-#pragma kernel Copy
 #pragma kernel Deform
-#pragma kernel Reset
+//#pragma kernel Copy
+//#pragma kernel Reset
 
 #pragma multi_compile __ LATTICE_HIGH_QUALITY
 
@@ -19,33 +19,33 @@ uint TangentOffset;
 uint StretchOffset;
 
 RWByteAddressBuffer VertexBuffer;
-RWStructuredBuffer<Vertex> OriginalBuffer;
+//RWStructuredBuffer<Vertex> OriginalBuffer;
 
-[numthreads(32, 1, 1)]
-void Copy(uint id: SV_DispatchThreadID)
-{
-	if (id >= VertexCount) return;
+//[numthreads(32, 1, 1)]
+//void Copy(uint id: SV_DispatchThreadID)
+//{
+//	if (id >= VertexCount) return;
 
-	Vertex original;
-	original.position = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
-	original.normal = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
-	original.tangent = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
+//	Vertex original;
+//	original.position = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
+//	original.normal = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
+//	original.tangent = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
 	
-	OriginalBuffer[id] = original;
-}
+//	OriginalBuffer[id] = original;
+//}
 
-[numthreads(32, 1, 1)]
-void Reset(uint id: SV_DispatchThreadID)
-{
-	if (id >= VertexCount) return;
+//[numthreads(32, 1, 1)]
+//void Reset(uint id: SV_DispatchThreadID)
+//{
+//	if (id >= VertexCount) return;
 
-	Vertex original = OriginalBuffer[id];
+//	Vertex original = OriginalBuffer[id];
 
-	VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(original.position));
-	VertexBuffer.Store3(id * BufferStride + NormalOffset, asuint(original.normal));
-	VertexBuffer.Store3(id * BufferStride + TangentOffset, asuint(original.tangent));
-	VertexBuffer.Store2(id * BufferStride + StretchOffset, asuint(float2(1, 1)));
-}
+//	VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(original.position));
+//	VertexBuffer.Store3(id * BufferStride + NormalOffset, asuint(original.normal));
+//	VertexBuffer.Store3(id * BufferStride + TangentOffset, asuint(original.tangent));
+//	VertexBuffer.Store2(id * BufferStride + StretchOffset, asuint(float2(1, 1)));
+//}
 
 float4x4 ObjectToLattice;
 float4x4 LatticeToObject;

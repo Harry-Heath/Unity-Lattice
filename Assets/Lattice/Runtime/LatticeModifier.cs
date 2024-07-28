@@ -12,67 +12,25 @@ namespace Lattice
 		[SerializeField] private bool _highQuality;
 		[SerializeField] private List<Lattice> _lattices = new();
 
-		private MeshFilter _meshFilter;
 		private Mesh _mesh;
+		private MeshInfo _meshInfo;
+		private MeshFilter _meshFilter;
 
-		private ComputeBuffer _originalBuffer;
+		private GraphicsBuffer _copyBuffer;
 		private GraphicsBuffer _vertexBuffer;
 		private bool _ranThisFrame = false;
 
-		private MeshFilter MeshFilter
-		{
-			get
-			{
-				if (_meshFilter == null)
-				{
-					_meshFilter = GetComponent<MeshFilter>();
-				}
-				return _meshFilter;
-			}
-		}
-
+		public List<Lattice> Lattices => _lattices;
+		public MeshInfo MeshInfo => _meshInfo;
+		public GraphicsBuffer CopyBuffer => _copyBuffer;
+		public GraphicsBuffer VertexBuffer => _vertexBuffer;
+		public Matrix4x4 LocalToWorld => transform.localToWorldMatrix;
+		public bool HighQuality => _highQuality;
+		public virtual bool IsValid => _vertexBuffer != null && _copyBuffer != null;
 		protected Mesh Mesh => _mesh;
-
-		// TODO: should cache this stuff...
-		protected int VertexCount => Mesh.vertexCount;
-		protected int BufferStride => Mesh.GetVertexBufferStride(0);
-		protected int PositionOffset => Mesh.GetVertexAttributeOffset(VertexAttribute.Position);
-		protected int NormalOffset => Mesh.GetVertexAttributeOffset(VertexAttribute.Normal);
-		protected int TangentOffset => Mesh.GetVertexAttributeOffset(VertexAttribute.Tangent);
-		protected int StretchOffset => Mesh.GetVertexAttributeOffset(VertexAttribute.TexCoord3);
-
-		protected ComputeBuffer OriginalBuffer
-		{
-			get
-			{
-				if (_originalBuffer == null && Mesh != null)
-				{
-					_originalBuffer = new(Mesh.vertexCount, 9 * sizeof(float));
-					CopyVertexBuffer();
-				}
-				return _originalBuffer;
-			}
-		}
-
-		protected GraphicsBuffer VertexBuffer
-		{
-			get
-			{
-				if (_vertexBuffer == null && Mesh != null)
-				{
-					Mesh.vertexBufferTarget |= GraphicsBuffer.Target.Raw;
-					_vertexBuffer = Mesh.GetVertexBuffer(0);
-				}
-
-				return _vertexBuffer;
-			}
-		}
-
-		protected Matrix4x4 LocalToWorld => transform.localToWorldMatrix;
-
-		protected bool HighQuality => _highQuality;
-		protected virtual bool Valid => VertexBuffer != null && OriginalBuffer != null;
-		private bool RanThisFrame => _ranThisFrame;
+		private MeshFilter MeshFilter => (_meshFilter == null)
+			? _meshFilter = GetComponent<MeshFilter>()
+			: _meshFilter;
 
 		private void Update()
 		{
@@ -80,92 +38,54 @@ namespace Lattice
 			{
 				ApplyMesh();
 			}
-
 			_ranThisFrame = false;
 		}
 
 		private void SetupMesh()
 		{
-			Mesh sharedMesh = _targetMesh != null ? _targetMesh : GetMesh();
+			// Get target mesh if one is not set
+			if (_targetMesh == null)
+			{
+				_targetMesh = GetMesh();
+			}
 
-			_targetMesh = sharedMesh;
-			_mesh = Instantiate(sharedMesh);
+			// Create a copy which the lattice will be applied to
+			_mesh = Instantiate(_targetMesh);
 			_mesh.hideFlags |= HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
-			_mesh.name = sharedMesh.name + " (Lattice)";
+			_mesh.name = _targetMesh.name + " (Lattice)";
+			_mesh.vertexBufferTarget |= (GraphicsBuffer.Target.Raw | GraphicsBuffer.Target.CopySource | GraphicsBuffer.Target.CopyDestination);
 
-			// Stretch and squish data.
-			// TODO: explain this
-			Vector2[] d = new Vector2[_mesh.vertexCount];
-			Array.Fill(d, Vector2.one);
-			_mesh.SetUVs(3, d);
+			// Add stretch and squish vertex channel
+			Vector2[] stretch = new Vector2[_mesh.vertexCount];
+			Array.Fill(stretch, Vector2.one);
+			_mesh.SetUVs(3, stretch);
+
+			// Get mesh information
+			_meshInfo.VertexCount	 = _mesh.vertexCount;
+			_meshInfo.BufferStride	 = _mesh.GetVertexBufferStride(0);
+			_meshInfo.PositionOffset = _mesh.GetVertexAttributeOffset(VertexAttribute.Position);
+			_meshInfo.NormalOffset   = _mesh.GetVertexAttributeOffset(VertexAttribute.Normal);
+			_meshInfo.TangentOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.Tangent);
+			_meshInfo.StretchOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.TexCoord3);
+
+			// Get vertex buffer
+			_vertexBuffer = _mesh.GetVertexBuffer(0);
+
+			// Create copy of vertex buffer
+			// Will be used for resetting to original every frame
+			_copyBuffer = new(
+				(GraphicsBuffer.Target.Raw | GraphicsBuffer.Target.CopySource | GraphicsBuffer.Target.CopyDestination),
+				_meshInfo.VertexCount,
+				_meshInfo.BufferStride
+			);
+			Graphics.CopyBuffer(_vertexBuffer, _copyBuffer);
 		}
 
-		private void CopyVertexBuffer()
+		protected virtual Mesh GetMesh()
 		{
-			// Copy into original buffer
-			LatticeFeature.Compute.SetInt(LatticeShaderProperties.VertexCount, VertexCount);
-			LatticeFeature.Compute.SetInt(LatticeShaderProperties.BufferStride, BufferStride);
-			LatticeFeature.Compute.SetInt(LatticeShaderProperties.PositionOffset, PositionOffset);
-			LatticeFeature.Compute.SetInt(LatticeShaderProperties.NormalOffset, NormalOffset);
-			LatticeFeature.Compute.SetInt(LatticeShaderProperties.TangentOffset, TangentOffset);
-
-			LatticeFeature.Compute.SetBuffer(0, LatticeShaderProperties.VertexBuffer, VertexBuffer);
-			LatticeFeature.Compute.SetBuffer(0, LatticeShaderProperties.OriginalBuffer, OriginalBuffer);
-
-			LatticeFeature.Compute.GetKernelThreadGroupSizes(0, out uint x, out uint _, out uint _);
-			LatticeFeature.Compute.Dispatch(0, VertexCount / (int)x + 1, 1, 1);
+			return MeshFilter.sharedMesh;
 		}
 
-		public void Execute(CommandBuffer cmd, ComputeShader compute, ComputeBuffer latticeBuffer)
-		{
-			if (this == null || _mesh == null) return;
-
-			if (HighQuality) cmd.EnableShaderKeyword("LATTICE_HIGH_QUALITY");
-			else cmd.DisableShaderKeyword("LATTICE_HIGH_QUALITY");
-
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.VertexCount, VertexCount);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.BufferStride, BufferStride);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.PositionOffset, PositionOffset);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.NormalOffset, NormalOffset);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.TangentOffset, TangentOffset);
-			cmd.SetComputeIntParam(compute, LatticeShaderProperties.StretchOffset, StretchOffset);
-
-			{
-				cmd.SetComputeBufferParam(compute, 2, LatticeShaderProperties.VertexBuffer, VertexBuffer);
-				cmd.SetComputeBufferParam(compute, 2, LatticeShaderProperties.OriginalBuffer, OriginalBuffer);
-
-				compute.GetKernelThreadGroupSizes(2, out uint x2, out uint _, out uint _);
-				cmd.DispatchCompute(compute, 2, VertexCount / (int)x2 + 1, 1, 1);
-			}
-
-			cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.VertexBuffer, VertexBuffer);
-			cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.OriginalBuffer, OriginalBuffer);
-			cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.LatticeBuffer, latticeBuffer);
-
-			compute.GetKernelThreadGroupSizes(1, out uint x, out uint _, out uint _);
-
-			for (int i = 0; i < _lattices.Count; i++)
-			{
-				Matrix4x4 objectToLattice = _lattices[i].transform.worldToLocalMatrix * LocalToWorld;
-				Matrix4x4 latticeToObject = objectToLattice.inverse;
-
-				cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.ObjectToLattice, objectToLattice);
-				cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.LatticeToObject, latticeToObject);
-
-				_resolution[0] = _lattices[i]._resolution.x;
-				_resolution[1] = _lattices[i]._resolution.y;
-				_resolution[2] = _lattices[i]._resolution.z;
-				cmd.SetComputeIntParams(compute, LatticeShaderProperties.LatticeResolution, _resolution);
-
-				cmd.SetBufferData(latticeBuffer, _lattices[i].Offsets);
-
-				cmd.DispatchCompute(compute, 1, VertexCount / (int)x + 1, 1, 1);
-			}
-		}
-
-		protected static int[] _resolution = new int[3];
-
-		protected virtual Mesh GetMesh() => MeshFilter.sharedMesh;
 		protected virtual void SetMesh(Mesh mesh)
 		{
 			MeshFilter.sharedMesh = mesh;
@@ -181,16 +101,10 @@ namespace Lattice
 			SetMesh(_targetMesh);
 		}
 
-		private void Initialize()
-		{
-			SetupMesh();
-			CopyVertexBuffer();
-		}
-
 		protected virtual void Release()
 		{
-			_originalBuffer?.Release();
-			_originalBuffer = null;
+			_copyBuffer?.Release();
+			_copyBuffer = null;
 
 			_vertexBuffer?.Release();
 			_vertexBuffer = null;
@@ -200,7 +114,7 @@ namespace Lattice
 
 		private void OnEnable()
 		{
-			Initialize();
+			SetupMesh();
 			ApplyMesh();
 		}
 
@@ -212,7 +126,7 @@ namespace Lattice
 
 		protected void OnWillRenderObject()
 		{
-			if (Valid && !RanThisFrame)
+			if (IsValid && !_ranThisFrame)
 			{
 				_ranThisFrame = true;
 				Enqueue();

@@ -103,7 +103,7 @@ namespace Lattice.Editor
 		}
 
 		/// <summary>
-		/// Applies lattice version meshes.
+		/// Applies lattice meshes.
 		/// </summary>
 		private static void ApplyMeshes()
 		{

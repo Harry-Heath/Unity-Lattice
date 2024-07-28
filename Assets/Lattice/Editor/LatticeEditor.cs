@@ -11,9 +11,7 @@ namespace Lattice.Editor
 
 		public override void OnInspectorGUI()
 		{
-			//Lattice.Fix();
-
-			if (Lattice.Handles.Count != Lattice.Resolution.x * Lattice.Resolution.y * Lattice.Resolution.z)
+			if (Lattice.Handles.Count != (Lattice.Resolution.x * Lattice.Resolution.y * Lattice.Resolution.z))
 			{
 				Lattice.Setup(Lattice.Resolution);
 			}
@@ -23,9 +21,7 @@ namespace Lattice.Editor
 
 		private void OnSceneGUI()
 		{
-			//Lattice.Fix();
-
-			if (Lattice.Handles.Count != Lattice.Resolution.x * Lattice.Resolution.y * Lattice.Resolution.z)
+			if (Lattice.Handles.Count != (Lattice.Resolution.x * Lattice.Resolution.y * Lattice.Resolution.z))
 			{
 				Lattice.Setup(Lattice.Resolution);
 			}
@@ -37,8 +33,6 @@ namespace Lattice.Editor
 		[DrawGizmo(GizmoType.InSelectionHierarchy, typeof(Lattice))]
 		private static void DrawGizmosCallback(Lattice lattice, GizmoType gizmoType)
 		{
-			//lattice.Fix();
-
 			if (gizmoType.HasFlag(GizmoType.Active))
 			{
 				DrawLattice(lattice, new(1f, 1f, 1f, 0.2f), CompareFunction.Always);
@@ -111,9 +105,9 @@ namespace Lattice.Editor
 			Color lineColour = LatticeSettings.Gradient.Evaluate(0.5f * squishStretchFactor + 0.5f);
 
 			float thickness = Mathf.Lerp(
-				LatticeSettings.LineThickness, squishStretchFactor < 0 ?
-					LatticeSettings.LineThicknessSquish :
-					LatticeSettings.LineThicknessStretch,
+				LatticeSettings.LineThickness, (squishStretchFactor < 0) 
+					? LatticeSettings.LineThicknessSquish 
+					: LatticeSettings.LineThicknessStretch,
 				Mathf.Abs(squishStretchFactor)
 			);
 

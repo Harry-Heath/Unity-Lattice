@@ -17,7 +17,7 @@ float4x4 LatticeToObject;
 uint3 LatticeResolution;
 StructuredBuffer<float3> LatticeBuffer;
 
-/// Gets a lattice handle offset from a 3d index
+/// Gets a lattice handle offset from a 3d index.
 float3 GetOffset(int3 handle)
 {
     handle = max(handle, int3(0, 0, 0));
@@ -137,7 +137,7 @@ float3 lx(int3 cell, float3 cellPosition)
 
 /* endregion Trilinear Functions */
 
-/// Transforms a point using a lattice
+/// Transforms a point using a lattice.
 float3 TransformPoint(float3 latticePosition)
 {
 	// Get the lattice cell which the vertex is in
@@ -161,7 +161,7 @@ float3 TransformPoint(float3 latticePosition)
 #endif
 }
 
-/// Kernel to apply a lattice transformation to a mesh
+/// Kernel to apply a lattice transformation to a mesh.
 [numthreads(32, 1, 1)]
 void Deform(uint id : SV_DispatchThreadID)
 {

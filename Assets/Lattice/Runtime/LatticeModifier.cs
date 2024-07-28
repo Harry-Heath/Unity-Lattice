@@ -34,12 +34,12 @@ namespace Lattice
 
 		#region Public Methods
 
-		internal void ApplyMesh()
+		public void ApplyMesh()
 		{
 			SetMesh(_mesh);
 		}
 
-		internal void ResetMesh()
+		public void ResetMesh()
 		{
 			SetMesh(_targetMesh);
 		}
@@ -54,6 +54,19 @@ namespace Lattice
 			if (_targetMesh == null)
 			{
 				_targetMesh = GetMesh();
+			}
+
+			// If no target mesh, log warning and exit early
+			if (_targetMesh == null)
+			{
+				Debug.LogWarning("No target mesh set. Can not initialise lattice modifier.", this);
+				return;
+			}
+
+			if (!_targetMesh.isReadable)
+			{
+				Debug.LogError("Target does not have read/write enabled. Enable it in the model import settings.", _targetMesh);
+				return;
 			}
 
 			// Create a copy which the lattice will be applied to

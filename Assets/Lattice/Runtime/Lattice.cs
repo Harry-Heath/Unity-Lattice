@@ -45,7 +45,7 @@ namespace Lattice
 		#region Public Methods
 
 		/// <summary>
-		/// Gets the handle by index. Index will be clamped to resolution
+		/// Gets the handle by index. Index will be clamped to resolution.
 		/// </summary>
 		public LatticeHandle GetHandle(int x, int y, int z)
 		{
@@ -53,7 +53,7 @@ namespace Lattice
 		}
 
 		/// <summary>
-		/// Gets the current offset from the handle's base position
+		/// Gets the current offset from the handle's base position.
 		/// </summary>
 		public Vector3 GetHandleOffset(int x, int y, int z)
 		{
@@ -61,7 +61,7 @@ namespace Lattice
 		}
 
 		/// <summary>
-		/// Set the offset of a handle relative to it's base position
+		/// Set the offset of a handle relative to it's base position.
 		/// </summary>
 		public void SetHandleOffset(int x, int y, int z, Vector3 offset)
 		{
@@ -69,7 +69,7 @@ namespace Lattice
 		}
 
 		/// <summary>
-		/// Gets the position of a handle including current offset
+		/// Gets the position of a handle including current offset.
 		/// </summary>
 		public Vector3 GetHandlePosition(int x, int y, int z)
 		{
@@ -77,7 +77,7 @@ namespace Lattice
 		}
 
 		/// <summary>
-		/// Set the position of a handle using a local transform position
+		/// Set the position of a handle using a local transform position.
 		/// </summary>
 		public void SetHandlePosition(int x, int y, int z, Vector3 position)
 		{
@@ -85,7 +85,7 @@ namespace Lattice
 		}
 
 		/// <summary>
-		/// Gets the position of a handle before any offset
+		/// Gets the position of a handle before any offset.
 		/// </summary>
 		public Vector3 GetBasePosition(int x, int y, int z)
 		{
@@ -97,7 +97,7 @@ namespace Lattice
 		}
 
 		/// <summary>
-		/// Sets up the lattice for the desired resolution
+		/// Sets up the lattice for the desired resolution.
 		/// </summary>
 		/// <param name="resolution">The desired resolution</param>
 		public void Setup(Vector3Int resolution)
@@ -150,7 +150,7 @@ namespace Lattice
 		#region Private Methods
 
 		/// <summary>
-		/// Gets the array index from a 3d handle index
+		/// Gets the array index from a 3d handle index.
 		/// </summary>
 		private int GetIndex(int x, int y, int z) => x + _resolution.x * y + _resolution.x * _resolution.y * z;
 

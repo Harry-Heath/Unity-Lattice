@@ -8,37 +8,38 @@ namespace Lattice
 	[ExecuteAlways, DisallowMultipleComponent]
 	public class SkinnedLatticeModifier : LatticeModifier
 	{
+		#region Fields
+
 		[SerializeField] private List<Lattice> _skinnedLattices = new();
 
 		private SkinnedMeshRenderer _skinnedMeshRenderer;
 		private GraphicsBuffer _skinnedVertexBuffer;
 
-		private SkinnedMeshRenderer MeshRenderer
-		{
-			get
-			{
-				if (_skinnedMeshRenderer == null)
-				{
-					_skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>();
-				}
-				return _skinnedMeshRenderer;
-			}
-		}
+		#endregion
 
-		private GraphicsBuffer SkinnedVertexBuffer
+		#region Properties
+
+		/// <summary>
+		/// Gets the current skinned vertex buffer.
+		/// </summary>
+		public GraphicsBuffer SkinnedVertexBuffer
 		{
 			get
 			{
 				if (_skinnedVertexBuffer == null && MeshRenderer != null)
-				{
-					MeshRenderer.vertexBufferTarget |= GraphicsBuffer.Target.Raw;
+				{ 
+					_skinnedMeshRenderer.vertexBufferTarget |= GraphicsBuffer.Target.Raw;
 					_skinnedVertexBuffer = _skinnedMeshRenderer.GetVertexBuffer();
+					
 				}
 				return _skinnedVertexBuffer;
 			}
 		}
 
-		private Matrix4x4 SkinnedLocalToWorld
+		/// <summary>
+		/// Gets the current skinned local to world matrix.
+		/// </summary>
+		public Matrix4x4 SkinnedLocalToWorld
 		{
 			get
 			{
@@ -53,49 +54,33 @@ namespace Lattice
 			}
 		}
 
-		//protected override bool IsValid => base.IsValid && SkinnedVertexBuffer != null;
+		/// <inheritdoc cref="LatticeModifier.IsValid"/>
+		public override bool IsValid => base.IsValid && SkinnedVertexBuffer != null;
 
-		//public void ExecuteSkinned(CommandBuffer cmd, ComputeShader compute, ComputeBuffer latticeBuffer)
-		//{
-		//	if (this == null) return;
+		/// <summary>
+		/// Retrieves the skinned mesh renderer.
+		/// </summary>
+		private SkinnedMeshRenderer MeshRenderer => (_skinnedMeshRenderer == null)
+			? _skinnedMeshRenderer = GetComponent<SkinnedMeshRenderer>()
+			: _skinnedMeshRenderer;
 
-		//	if (HighQuality) cmd.EnableShaderKeyword("LATTICE_HIGH_QUALITY");
-		//	else cmd.DisableShaderKeyword("LATTICE_HIGH_QUALITY");
+		#endregion
 
-		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.VertexCount, VertexCount);
-		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.BufferStride, BufferStride);
-		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.PositionOffset, PositionOffset);
-		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.NormalOffset, NormalOffset);
-		//	cmd.SetComputeIntParam(compute, LatticeShaderProperties.TangentOffset, TangentOffset);
+		#region Protected Methods
 
-		//	cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.VertexBuffer, SkinnedVertexBuffer);
-		//	cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.OriginalBuffer, CopyBuffer);
-		//	cmd.SetComputeBufferParam(compute, 1, LatticeShaderProperties.LatticeBuffer, latticeBuffer);
+		/// <inheritdoc cref="LatticeModifier.GetMesh"/>
+		protected override Mesh GetMesh()
+		{
+			return MeshRenderer.sharedMesh;
+		}
 
-		//	compute.GetKernelThreadGroupSizes(1, out uint x, out uint _, out uint _);
+		/// <inheritdoc cref="LatticeModifier.SetMesh"/>
+		protected override void SetMesh(Mesh mesh)
+		{
+			MeshRenderer.sharedMesh = mesh;
+		}
 
-		//	for (int i = 0; i < _skinnedLattices.Count; i++)
-		//	{
-		//		Matrix4x4 objectToLattice = _skinnedLattices[i].transform.worldToLocalMatrix * SkinnedLocalToWorld;
-		//		Matrix4x4 latticeToObject = objectToLattice.inverse;
-
-		//		cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.ObjectToLattice, objectToLattice);
-		//		cmd.SetComputeMatrixParam(compute, LatticeShaderProperties.LatticeToObject, latticeToObject);
-
-		//		_resolution[0] = _skinnedLattices[i]._resolution.x;
-		//		_resolution[1] = _skinnedLattices[i]._resolution.y;
-		//		_resolution[2] = _skinnedLattices[i]._resolution.z;
-		//		cmd.SetComputeIntParams(compute, LatticeShaderProperties.LatticeResolution, _resolution);
-
-		//		cmd.SetBufferData(latticeBuffer, _skinnedLattices[i].Offsets);
-
-		//		cmd.DispatchCompute(compute, 1, VertexCount / (int)x + 1, 1, 1);//
-		//	}
-		//}
-
-		protected override Mesh GetMesh() => MeshRenderer.sharedMesh;
-		protected override void SetMesh(Mesh mesh) => MeshRenderer.sharedMesh = mesh;
-
+		/// <inheritdoc cref="LatticeModifier.Release"/>
 		protected override void Release()
 		{
 			base.Release();
@@ -104,9 +89,12 @@ namespace Lattice
 			_skinnedVertexBuffer = null;
 		}
 
+		/// <inheritdoc cref="LatticeModifier.Enqueue"/>
 		protected override void Enqueue()
 		{
 			LatticeFeature.Enqueue(this);
 		}
+
+		#endregion
 	}
 }

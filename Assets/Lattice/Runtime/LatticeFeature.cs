@@ -15,6 +15,10 @@ namespace Lattice
 		/// Hardcoded max number of lattice handles supported. Can be changed.
 		/// </summary>
 		public const int MaxHandles = 1024;
+
+		/// <summary>
+		/// The compute shader file name, relative to a Resources folder.
+		/// </summary>
 		private const string ComputeShaderName = "Shaders/LatticeCompute";
 
 		private static bool _initialised = false;
@@ -80,6 +84,9 @@ namespace Lattice
 			_initialised = true;
 		}
 
+		/// <summary>
+		/// Performs cleanup of lattice related things.
+		/// </summary>
 		public static void Cleanup()
 		{
 			if (!_initialised) return;
@@ -174,30 +181,77 @@ namespace Lattice
 			}
 		}
 
-		private static void ApplySkinnedModifier(CommandBuffer cmd, SkinnedLatticeModifier modifier)
-		{
-			if (modifier == null) return;
-
-
-		}
-
 		private static void ApplySkinnedModifiers()
 		{
-			//if (_skinnedModifiers.Count == 0 || _latticeBuffer == null) return;
+			if (_skinnedModifiers.Count == 0 || _latticeBuffer == null) return;
 
-			//CommandBuffer cmd = CommandBufferPool.Get("Skinned Lattice");
+			// Setup compute - only needed here in development
+			// These two calls are only here because editing the compute shader will cause
+			// the asset to refresh and these values will be lost.
+			_compute.GetKernelThreadGroupSizes(0, out _computeGroupSize, out uint _, out uint _);
+			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
 
-			//for (int i = 0; i < _skinnedModifiers.Count; i++)
-			//{
-			//	_skinnedModifiers[i].ExecuteSkinned(cmd, Compute, _latticeBuffer);
-			//}
+			// Get command buffer
+			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifier");
 
-			//Graphics.ExecuteCommandBuffer(cmd);
-			//CommandBufferPool.Release(cmd);
+			// Apply all modifiers
+			for (int i = 0; i < _skinnedModifiers.Count; i++)
+			{
+				ApplySkinnedModifier(cmd, _skinnedModifiers[i]);
+			}
 
-			//_skinnedModifiers.Clear();
+			// Execute
+			Graphics.ExecuteCommandBuffer(cmd);
+			CommandBufferPool.Release(cmd);
+
+			// Clear modifier queue
+			_skinnedModifiers.Clear();
 		}
 
+		private static void ApplySkinnedModifier(CommandBuffer cmd, SkinnedLatticeModifier modifier)
+		{
+			if (modifier == null || !modifier.IsValid) return;
+
+			// Enable or disable high quality deformations
+			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);
+
+			// Set vertex buffer
+			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.SkinnedVertexBuffer);
+
+			// Setup mesh info
+			MeshInfo info = modifier.MeshInfo;
+			SetMeshInfo(cmd, info);
+
+			// Apply lattices
+			Matrix4x4 localToWorld = modifier.SkinnedLocalToWorld;
+			List<Lattice> lattices = modifier.Lattices;
+			for (int i = 0; i < lattices.Count; i++)
+			{
+				Lattice lattice = lattices[i];
+
+				// Set lattice parameters
+				Matrix4x4 objectToLattice = lattice.transform.worldToLocalMatrix * localToWorld;
+				Matrix4x4 latticeToObject = objectToLattice.inverse;
+
+				cmd.SetComputeMatrixParam(_compute, ObjectToLatticeId, objectToLattice);
+				cmd.SetComputeMatrixParam(_compute, LatticeToObjectId, latticeToObject);
+
+				_latticeResolution[0] = lattice.Resolution.x;
+				_latticeResolution[1] = lattice.Resolution.y;
+				_latticeResolution[2] = lattice.Resolution.z;
+				cmd.SetComputeIntParams(_compute, LatticeResolutionId, _latticeResolution);
+
+				// Set lattice offsets
+				cmd.SetBufferData(_latticeBuffer, lattice.Offsets);
+
+				// Apply lattice
+				cmd.DispatchCompute(_compute, 0, info.VertexCount / (int)_computeGroupSize + 1, 1, 1);
+			}
+		}
+
+		/// <summary>
+		/// Sets the compute shader's mesh related properties
+		/// </summary>
 		private static void SetMeshInfo(CommandBuffer cmd, MeshInfo info)
 		{
 			cmd.SetComputeIntParam(_compute, VertexCountId,    info.VertexCount);

@@ -13,7 +13,9 @@ namespace Lattice
 {
 	public static class LatticeFeature
 	{
-		// Max number of handles supported
+		/// <summary>
+		/// Hardcoded max number of lattice handles supported. Can be changed.
+		/// </summary>
 		public const int MaxHandles = 1024;
 
 		private static bool _init = false;
@@ -22,11 +24,12 @@ namespace Lattice
 		private static uint _computeGroupSize;
 
 		private static ComputeBuffer _latticeBuffer;
+		private static readonly int[] _latticeResolution = new int[3];
 		private static readonly List<LatticeModifier> _modifiers = new();
 		private static readonly List<SkinnedLatticeModifier> _skinnedModifiers = new();
 
 		/// <summary>
-		/// Enqueues a lattice modifier
+		/// Enqueues a mesh to be deformed this frame
 		/// </summary>
 		public static void Enqueue(LatticeModifier modifier)
 		{
@@ -34,7 +37,7 @@ namespace Lattice
 		}
 
 		/// <summary>
-		/// Enqueues a skinned lattice modifer
+		/// Enqueues a skinned mesh to be deformed this frame
 		/// </summary>
 		public static void Enqueue(SkinnedLatticeModifier modifier)
 		{
@@ -155,6 +158,12 @@ namespace Lattice
 		{
 			if (_modifiers.Count == 0 || _latticeBuffer == null) return;
 
+			// Setup compute - only needed here in development
+			// These two calls are only here because editing the compute shader will cause
+			// the asset to refresh and these values will be lost.
+			_compute.GetKernelThreadGroupSizes(0, out _computeGroupSize, out uint _, out uint _);
+			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
+
 			// Get command buffer
 			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifier");
 
@@ -172,29 +181,34 @@ namespace Lattice
 			_modifiers.Clear();
 		}
 
-		private static readonly int[] _resolution = new int[3];
+		
 
-		private static void ApplyModifier(CommandBuffer cmd, LatticeModifier modifier)
+		private static void SetMeshInfo(CommandBuffer cmd, MeshInfo info)
 		{
-			if (modifier == null || !modifier.IsValid) return;
-
-			// Enable or disable high quality
-			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);
-
-			// Copy original buffer back onto vertex buffer
-			cmd.CopyBuffer(modifier.CopyBuffer, modifier.VertexBuffer);
-			
-			// Setup vertex buffer
-			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.VertexBuffer);
-
-			// Setup mesh info
-			MeshInfo info = modifier.MeshInfo;
 			cmd.SetComputeIntParam(_compute, VertexCountId,    info.VertexCount);
 			cmd.SetComputeIntParam(_compute, BufferStrideId,   info.BufferStride);
 			cmd.SetComputeIntParam(_compute, PositionOffsetId, info.PositionOffset);
 			cmd.SetComputeIntParam(_compute, NormalOffsetId,   info.NormalOffset);
 			cmd.SetComputeIntParam(_compute, TangentOffsetId,  info.TangentOffset);
 			cmd.SetComputeIntParam(_compute, StretchOffsetId,  info.StretchOffset);
+		}
+
+		private static void ApplyModifier(CommandBuffer cmd, LatticeModifier modifier)
+		{
+			if (modifier == null || !modifier.IsValid) return;
+
+			// Enable or disable high quality deformations
+			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);
+
+			// Copy original buffer back onto vertex buffer
+			cmd.CopyBuffer(modifier.CopyBuffer, modifier.VertexBuffer);
+			
+			// Set vertex buffer
+			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.VertexBuffer);
+
+			// Setup mesh info
+			MeshInfo info = modifier.MeshInfo;
+			SetMeshInfo(cmd, info);
 			
 			// Apply lattices
 			List<Lattice> lattices = modifier.Lattices;
@@ -202,19 +216,19 @@ namespace Lattice
 			{
 				Lattice lattice = lattices[i];
 
-				// Setup lattice parameters
+				// Set lattice parameters
 				Matrix4x4 objectToLattice = lattice.transform.worldToLocalMatrix * modifier.LocalToWorld;
 				Matrix4x4 latticeToObject = objectToLattice.inverse;
 
 				cmd.SetComputeMatrixParam(_compute, ObjectToLatticeId, objectToLattice);
 				cmd.SetComputeMatrixParam(_compute, LatticeToObjectId, latticeToObject);
 
-				_resolution[0] = lattice._resolution.x;
-				_resolution[1] = lattice._resolution.y;
-				_resolution[2] = lattice._resolution.z;
-				cmd.SetComputeIntParams(_compute, LatticeResolutionId, _resolution);
+				_latticeResolution[0] = lattice.Resolution.x;
+				_latticeResolution[1] = lattice.Resolution.y;
+				_latticeResolution[2] = lattice.Resolution.z;
+				cmd.SetComputeIntParams(_compute, LatticeResolutionId, _latticeResolution);
 
-				// Setup lattice offsets
+				// Set lattice offsets
 				cmd.SetBufferData(_latticeBuffer, lattice.Offsets);
 
 				// Apply lattice

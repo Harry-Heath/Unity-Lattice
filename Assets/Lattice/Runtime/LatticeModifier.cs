@@ -27,21 +27,28 @@ namespace Lattice
 		public Matrix4x4 LocalToWorld => transform.localToWorldMatrix;
 		public bool HighQuality => _highQuality;
 		public virtual bool IsValid => _vertexBuffer != null && _copyBuffer != null;
-		protected Mesh Mesh => _mesh;
 		private MeshFilter MeshFilter => (_meshFilter == null)
 			? _meshFilter = GetComponent<MeshFilter>()
 			: _meshFilter;
 
-		private void Update()
+
+		#region Public Methods
+
+		internal void ApplyMesh()
 		{
-			if (_mesh != null && _mesh != GetMesh())
-			{
-				ApplyMesh();
-			}
-			_ranThisFrame = false;
+			SetMesh(_mesh);
 		}
 
-		private void SetupMesh()
+		internal void ResetMesh()
+		{
+			SetMesh(_targetMesh);
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private void Initialise()
 		{
 			// Get target mesh if one is not set
 			if (_targetMesh == null)
@@ -81,26 +88,6 @@ namespace Lattice
 			Graphics.CopyBuffer(_vertexBuffer, _copyBuffer);
 		}
 
-		protected virtual Mesh GetMesh()
-		{
-			return MeshFilter.sharedMesh;
-		}
-
-		protected virtual void SetMesh(Mesh mesh)
-		{
-			MeshFilter.sharedMesh = mesh;
-		}
-
-		public void ApplyMesh()
-		{
-			SetMesh(Mesh);
-		}
-
-		public void ResetMesh()
-		{
-			SetMesh(_targetMesh);
-		}
-
 		protected virtual void Release()
 		{
 			_copyBuffer?.Release();
@@ -112,9 +99,37 @@ namespace Lattice
 			_mesh = null;
 		}
 
+		protected virtual Mesh GetMesh()
+		{
+			return MeshFilter.sharedMesh;
+		}
+
+		protected virtual void SetMesh(Mesh mesh)
+		{
+			MeshFilter.sharedMesh = mesh;
+		}
+
+		protected virtual void Enqueue()
+		{
+			LatticeFeature.Enqueue(this);
+		}
+
+		#endregion
+
+		#region Unity Methods
+
+		private void Update()
+		{
+			if (_mesh != null && _mesh != GetMesh())
+			{
+				ApplyMesh();
+			}
+			_ranThisFrame = false;
+		}
+
 		private void OnEnable()
 		{
-			SetupMesh();
+			Initialise();
 			ApplyMesh();
 		}
 
@@ -124,7 +139,7 @@ namespace Lattice
 			Release();
 		}
 
-		protected void OnWillRenderObject()
+		private void OnWillRenderObject()
 		{
 			if (IsValid && !_ranThisFrame)
 			{
@@ -133,9 +148,6 @@ namespace Lattice
 			}
 		}
 
-		protected virtual void Enqueue()
-		{
-			LatticeFeature.Enqueue(this);
-		}
+		#endregion
 	}
 }

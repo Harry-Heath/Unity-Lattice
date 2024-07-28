@@ -23,7 +23,7 @@ float3 GetOffset(int3 handle)
     handle = max(handle, int3(0, 0, 0));
     handle = min(handle, LatticeResolution - int3(1, 1, 1));
 
-    int index = handle.x + (handle.y * LatticeResolution.x) + (handle.z * LatticeResolution.x * LatticeResolution.y);
+    int index = handle.x + (LatticeResolution.x * handle.y) + (LatticeResolution.x * LatticeResolution.y * handle.z);
     return LatticeBuffer[index];
 }
 

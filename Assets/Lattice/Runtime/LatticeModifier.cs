@@ -60,7 +60,7 @@ namespace Lattice
 		/// <summary>
 		/// Whether the component is valid and can be applied without errors.
 		/// </summary>
-		public virtual bool IsValid => _vertexBuffer != null && _copyBuffer != null;
+		public virtual bool IsValid => (_vertexBuffer != null) && (_copyBuffer != null);
 
 		/// <summary>
 		/// Retrieves the mesh filter on the current object.

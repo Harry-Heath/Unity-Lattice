@@ -122,7 +122,7 @@ namespace Lattice
 			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
 
 			// Get command buffer
-			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifier");
+			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifiers");
 
 			// Apply all modifiers
 			for (int i = 0; i < _modifiers.Count; i++)
@@ -161,6 +161,8 @@ namespace Lattice
 			{
 				Lattice lattice = lattices[i];
 
+				if (lattice == null) continue;
+
 				// Set lattice parameters
 				Matrix4x4 objectToLattice = lattice.transform.worldToLocalMatrix * modifier.LocalToWorld;
 				Matrix4x4 latticeToObject = objectToLattice.inverse;
@@ -192,7 +194,7 @@ namespace Lattice
 			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
 
 			// Get command buffer
-			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifier");
+			CommandBuffer cmd = CommandBufferPool.Get("Skinned Lattice Modifiers");
 
 			// Apply all modifiers
 			for (int i = 0; i < _skinnedModifiers.Count; i++)
@@ -222,12 +224,14 @@ namespace Lattice
 			MeshInfo info = modifier.MeshInfo;
 			SetMeshInfo(cmd, info);
 
-			// Apply lattices
+			// Apply skinned lattices
 			Matrix4x4 localToWorld = modifier.SkinnedLocalToWorld;
-			List<Lattice> lattices = modifier.Lattices;
+			List<Lattice> lattices = modifier.SkinnedLattices;
 			for (int i = 0; i < lattices.Count; i++)
 			{
 				Lattice lattice = lattices[i];
+
+				if (lattice == null) continue;
 
 				// Set lattice parameters
 				Matrix4x4 objectToLattice = lattice.transform.worldToLocalMatrix * localToWorld;

@@ -20,17 +20,21 @@ namespace Lattice
 		#region Properties
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public List<Lattice> SkinnedLattices => _skinnedLattices;
+
+		/// <summary>
 		/// Gets the current skinned vertex buffer.
 		/// </summary>
 		public GraphicsBuffer SkinnedVertexBuffer
 		{
 			get
 			{
-				if (_skinnedVertexBuffer == null && MeshRenderer != null)
+				if ((_skinnedVertexBuffer == null) && (MeshRenderer != null))
 				{ 
 					_skinnedMeshRenderer.vertexBufferTarget |= GraphicsBuffer.Target.Raw;
 					_skinnedVertexBuffer = _skinnedMeshRenderer.GetVertexBuffer();
-					
 				}
 				return _skinnedVertexBuffer;
 			}
@@ -43,7 +47,7 @@ namespace Lattice
 		{
 			get
 			{
-				if (MeshRenderer && MeshRenderer.rootBone != null)
+				if ((MeshRenderer != null) && (MeshRenderer.rootBone != null))
 				{
 					return Matrix4x4.TRS(MeshRenderer.rootBone.position, MeshRenderer.rootBone.rotation, Vector3.one);
 				}
@@ -55,7 +59,7 @@ namespace Lattice
 		}
 
 		/// <inheritdoc cref="LatticeModifier.IsValid"/>
-		public override bool IsValid => base.IsValid && SkinnedVertexBuffer != null;
+		public override bool IsValid => base.IsValid && (SkinnedVertexBuffer != null);
 
 		/// <summary>
 		/// Retrieves the skinned mesh renderer.

@@ -152,7 +152,7 @@ namespace Lattice
 		/// <summary>
 		/// Gets the array index from a 3d handle index.
 		/// </summary>
-		private int GetIndex(int x, int y, int z) => x + _resolution.x * y + _resolution.x * _resolution.y * z;
+		private int GetIndex(int x, int y, int z) => x + (_resolution.x * y) + (_resolution.x * _resolution.y * z);
 
 		#endregion
 

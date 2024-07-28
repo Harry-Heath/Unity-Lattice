@@ -13,7 +13,6 @@ namespace Lattice
 		public static readonly int TangentOffsetId = Shader.PropertyToID("TangentOffset");
 		public static readonly int StretchOffsetId = Shader.PropertyToID("StretchOffset");
 		public static readonly int VertexBufferId = Shader.PropertyToID("VertexBuffer");
-		//public static readonly int OriginalBuffer = Shader.PropertyToID("OriginalBuffer");
 		public static readonly int LatticeBufferId = Shader.PropertyToID("LatticeBuffer");
 		public static readonly int ObjectToLatticeId = Shader.PropertyToID("ObjectToLattice");
 		public static readonly int LatticeToObjectId = Shader.PropertyToID("LatticeToObject");

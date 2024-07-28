@@ -50,7 +50,7 @@ namespace Lattice
 
 		private void Initialise()
 		{
-			// Get target mesh if one is not set
+			// Try get target mesh if one is not set
 			if (_targetMesh == null)
 			{
 				_targetMesh = GetMesh();
@@ -63,6 +63,7 @@ namespace Lattice
 				return;
 			}
 
+			// If not readable, log error and exit early
 			if (!_targetMesh.isReadable)
 			{
 				Debug.LogError("Target does not have read/write enabled. Enable it in the model import settings.", _targetMesh);
@@ -81,8 +82,8 @@ namespace Lattice
 			_mesh.SetUVs(3, stretch);
 
 			// Get mesh information
-			_meshInfo.VertexCount	 = _mesh.vertexCount;
-			_meshInfo.BufferStride	 = _mesh.GetVertexBufferStride(0);
+			_meshInfo.VertexCount    = _mesh.vertexCount;
+			_meshInfo.BufferStride   = _mesh.GetVertexBufferStride(0);
 			_meshInfo.PositionOffset = _mesh.GetVertexAttributeOffset(VertexAttribute.Position);
 			_meshInfo.NormalOffset   = _mesh.GetVertexAttributeOffset(VertexAttribute.Normal);
 			_meshInfo.TangentOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.Tangent);

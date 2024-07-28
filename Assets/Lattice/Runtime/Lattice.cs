@@ -8,7 +8,7 @@ namespace Lattice
 	public class Lattice : MonoBehaviour
 	{
 		[SerializeField] private Vector3Int _resolution = new(2, 2, 2);
-		[SerializeField] private List<LatticeHandle> _handles = new();
+		[SerializeField, HideInInspector] private List<LatticeHandle> _handles = new();
 
 		private readonly List<Vector3> _offsets = new();
 

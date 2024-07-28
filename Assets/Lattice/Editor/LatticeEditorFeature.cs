@@ -19,8 +19,8 @@ namespace Lattice.Editor
 			if (_initialised) return;
 
 			LatticeFeature.Initialise();
-			EditorApplication.quitting += Cleanup;
 
+			EditorApplication.quitting += Cleanup;
 			AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
 			EditorApplication.playModeStateChanged += OnStateChanged;
 			EditorSceneManager.sceneSaved += OnSceneSaved;
@@ -38,8 +38,8 @@ namespace Lattice.Editor
 			if (!_initialised) return;
 
 			LatticeFeature.Cleanup();
-			EditorApplication.quitting -= Cleanup;
 
+			EditorApplication.quitting -= Cleanup;
 			AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
 			EditorApplication.playModeStateChanged -= OnStateChanged;
 			EditorSceneManager.sceneSaved -= OnSceneSaved;

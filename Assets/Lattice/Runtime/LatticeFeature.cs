@@ -89,7 +89,7 @@ namespace Lattice
 			// Release the lattice buffer
 			_latticeBuffer?.Release();
 			_latticeBuffer = null;
-			
+
 			// Clear existing modifiers
 			_modifiers.Clear();
 			_skinnedModifiers.Clear();
@@ -122,7 +122,7 @@ namespace Lattice
 			{
 				ApplyModifier(cmd, _modifiers[i]);
 			}
-			
+
 			// Execute
 			Graphics.ExecuteCommandBuffer(cmd);
 			CommandBufferPool.Release(cmd);
@@ -140,14 +140,14 @@ namespace Lattice
 
 			// Copy original buffer back onto vertex buffer
 			cmd.CopyBuffer(modifier.CopyBuffer, modifier.VertexBuffer);
-			
+
 			// Set vertex buffer
 			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.VertexBuffer);
 
 			// Setup mesh info
 			MeshInfo info = modifier.MeshInfo;
 			SetMeshInfo(cmd, info);
-			
+
 			// Apply lattices
 			List<Lattice> lattices = modifier.Lattices;
 			for (int i = 0; i < lattices.Count; i++)

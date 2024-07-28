@@ -2,7 +2,7 @@
 
 #pragma multi_compile __ LATTICE_HIGH_QUALITY
 
-// Vertex buffer information
+// Vertex buffer properties
 uint VertexCount;
 uint BufferStride;
 uint PositionOffset;
@@ -11,13 +11,13 @@ uint TangentOffset;
 uint StretchOffset;
 RWByteAddressBuffer VertexBuffer;
 
-// Lattice information
+// Lattice properties
 float4x4 ObjectToLattice;
 float4x4 LatticeToObject;
 uint3 LatticeResolution;
 StructuredBuffer<float3> LatticeBuffer;
 
-/// Gets a lattice handle offset from a 3d index.
+/// Retrieves a lattice handle's offset.
 float3 GetOffset(int3 handle)
 {
     handle = max(handle, int3(0, 0, 0));
@@ -148,7 +148,7 @@ float3 TransformPoint(float3 latticePosition)
 	);
 
 	// Get relative position in cell -> [0, 1)
-    float3 cellPosition = (latticePosition) * (LatticeResolution - int3(1, 1, 1)) - cell;
+    float3 cellPosition = latticePosition * (LatticeResolution - int3(1, 1, 1)) - cell;
 
 #if LATTICE_HIGH_QUALITY
 	// Tricubic interpolation
@@ -170,43 +170,42 @@ void Deform(uint id : SV_DispatchThreadID)
 
 	// Get original vertex info
     float3 originalPosition = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
-    float3 originalNormal = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
-    float3 originalTangent = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
-    float2 originalStretch = asfloat(VertexBuffer.Load2(id * BufferStride + StretchOffset));
+    float3 originalNormal   = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
+    float3 originalTangent  = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
     float3 originalBinormal = cross(originalNormal, originalTangent);
 
 	// Calculate new position
     float3 latticePosition = mul(ObjectToLattice, float4(originalPosition, 1)).xyz;
-    float3 newPosition = TransformPoint(latticePosition);
+    float3 newPosition     = TransformPoint(latticePosition);
 
 	// Calculate new tangent and binormal points
 	// These are used to calculate the normal later
-    float3 originalTangentPosition = originalPosition + 0.01f * originalTangent;
+    float3 originalTangentPosition  = originalPosition + 0.01f * originalTangent;
     float3 originalBinormalPosition = originalPosition + 0.01f * originalBinormal;
 
-    float3 latticeTangentPosition = mul(ObjectToLattice, float4(originalTangentPosition, 1)).xyz;
+    float3 latticeTangentPosition  = mul(ObjectToLattice, float4(originalTangentPosition, 1)).xyz;
     float3 latticeBinormalPosition = mul(ObjectToLattice, float4(originalBinormalPosition, 1)).xyz;
 
-    float3 newTangentPosition = TransformPoint(latticeTangentPosition);
+    float3 newTangentPosition  = TransformPoint(latticeTangentPosition);
     float3 newBinormalPosition = TransformPoint(latticeBinormalPosition);
 
 	// Convert points from lattice coords back to object coords
-    float3 position = mul(LatticeToObject, float4(newPosition, 1)).xyz;
-    float3 tangentPosition = mul(LatticeToObject, float4(newTangentPosition, 1)).xyz;
+    float3 position         = mul(LatticeToObject, float4(newPosition, 1)).xyz;
+    float3 tangentPosition  = mul(LatticeToObject, float4(newTangentPosition, 1)).xyz;
     float3 binormalPosition = mul(LatticeToObject, float4(newBinormalPosition, 1)).xyz;
 	
 	// Calculate new tangent and normal
     float3 tangent = normalize(tangentPosition - position);
-    float3 normal = normalize(cross(tangent, binormalPosition - position));
+    float3 normal  = normalize(cross(tangent, binormalPosition - position));
 
 	// Determine stretch
-    float stretchTangent = length(tangentPosition - position) * 100;
+    float stretchTangent  = length(tangentPosition - position) * 100;
     float stretchBinormal = length(binormalPosition - position) * 100;
-    float2 stretch = originalStretch * float2(stretchTangent, stretchBinormal);
+    float2 stretch = float2(stretchTangent, stretchBinormal);
 
 	// Update vertex buffer
     VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(position));
-    VertexBuffer.Store3(id * BufferStride + NormalOffset, asuint(normal));
-    VertexBuffer.Store3(id * BufferStride + TangentOffset, asuint(tangent));
-    VertexBuffer.Store2(id * BufferStride + StretchOffset, asuint(stretch));
+    VertexBuffer.Store3(id * BufferStride + NormalOffset,   asuint(normal));
+    VertexBuffer.Store3(id * BufferStride + TangentOffset,  asuint(tangent));
+    VertexBuffer.Store2(id * BufferStride + StretchOffset,  asuint(stretch));
 }

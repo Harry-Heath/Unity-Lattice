@@ -207,5 +207,5 @@ void Deform(uint id : SV_DispatchThreadID)
     VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(position));
     VertexBuffer.Store3(id * BufferStride + NormalOffset,   asuint(normal));
     VertexBuffer.Store3(id * BufferStride + TangentOffset,  asuint(tangent));
-    VertexBuffer.Store2(id * BufferStride + StretchOffset,  asuint(stretch));
+    //VertexBuffer.Store2(id * BufferStride + StretchOffset,  asuint(stretch));
 }

@@ -20,7 +20,7 @@ namespace Lattice
 		#region Properties
 
 		/// <summary>
-		/// 
+		/// Skinned lattices to apply.
 		/// </summary>
 		public List<Lattice> SkinnedLattices => _skinnedLattices;
 
@@ -31,7 +31,7 @@ namespace Lattice
 		{
 			get
 			{
-				if ((_skinnedVertexBuffer == null) && (MeshRenderer != null))
+				if (_skinnedVertexBuffer == null && MeshRenderer != null)
 				{ 
 					_skinnedMeshRenderer.vertexBufferTarget |= GraphicsBuffer.Target.Raw;
 					_skinnedVertexBuffer = _skinnedMeshRenderer.GetVertexBuffer();
@@ -47,7 +47,7 @@ namespace Lattice
 		{
 			get
 			{
-				if ((MeshRenderer != null) && (MeshRenderer.rootBone != null))
+				if (MeshRenderer != null && MeshRenderer.rootBone != null)
 				{
 					return Matrix4x4.TRS(MeshRenderer.rootBone.position, MeshRenderer.rootBone.rotation, Vector3.one);
 				}

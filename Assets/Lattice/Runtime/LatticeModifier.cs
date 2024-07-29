@@ -60,7 +60,7 @@ namespace Lattice
 		/// <summary>
 		/// Whether the component is valid and can be applied without errors.
 		/// </summary>
-		public virtual bool IsValid => (_vertexBuffer != null) && (_copyBuffer != null);
+		public virtual bool IsValid => _vertexBuffer != null && _copyBuffer != null;
 
 		/// <summary>
 		/// Retrieves the mesh filter on the current object.
@@ -162,7 +162,7 @@ namespace Lattice
 			_mesh = Instantiate(_targetMesh);
 			_mesh.hideFlags |= HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
 			_mesh.name = _targetMesh.name + " (Lattice)";
-			_mesh.vertexBufferTarget |= (GraphicsBuffer.Target.Raw | GraphicsBuffer.Target.CopySource | GraphicsBuffer.Target.CopyDestination);
+			_mesh.vertexBufferTarget |= GraphicsBuffer.Target.Raw | GraphicsBuffer.Target.CopySource | GraphicsBuffer.Target.CopyDestination;
 
 			// Add stretch and squish vertex channel
 			Vector2[] stretch = new Vector2[_mesh.vertexCount];

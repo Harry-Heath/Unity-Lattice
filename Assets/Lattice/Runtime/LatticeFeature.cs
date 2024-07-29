@@ -156,6 +156,7 @@ namespace Lattice
 			SetMeshInfo(cmd, info);
 
 			// Apply lattices
+			Matrix4x4 localToWorld = modifier.LocalToWorld;
 			List<Lattice> lattices = modifier.Lattices;
 			for (int i = 0; i < lattices.Count; i++)
 			{
@@ -164,7 +165,7 @@ namespace Lattice
 				if (lattice == null) continue;
 
 				// Set lattice parameters
-				Matrix4x4 objectToLattice = lattice.transform.worldToLocalMatrix * modifier.LocalToWorld;
+				Matrix4x4 objectToLattice = lattice.transform.worldToLocalMatrix * localToWorld;
 				Matrix4x4 latticeToObject = objectToLattice.inverse;
 
 				cmd.SetComputeMatrixParam(_compute, ObjectToLatticeId, objectToLattice);

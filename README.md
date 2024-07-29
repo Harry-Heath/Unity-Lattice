@@ -17,16 +17,16 @@ Add lattices to the scene, and add modifier components to meshes to see them rea
 
 ### Skinned meshes support
 
-Lattice modifiers can be applied to both static and skinned meshes. When it comes to skinned meshes, lattices can either be applied before or after skinning, or both.
+Lattice modifiers can be applied to both static and skinned meshes. When it comes to skinned meshes, lattices can either be applied before or after skinning, or both.  
+**Note:** GPU skinning must be enabled within project settings for skinned mesh support.
 
 ### Compute shader based
 
-Deformations are done using compute shaders, so performance is equivalent to GPU skinning. However, like skinning, meshes affected by lattices do not support instancing.  
-**Note:** GPU skinning must be enabled within project settings for this to work.
+Deformations are done using compute shaders, so performance is equivalent to GPU skinning. However, like skinning, meshes affected by lattices do not support instancing.
 
-### Shader support
+### Material support
 
-Deformation is done seperately from rendering, so you are able to use whatever shader/material you'd like. As a bonus, the amount of stretching and squishing can be applied to a vertex channel and read in custom shaders for further dynamic effects.  
+Deformation is done seperately from rendering, so you are able to use whatever material you'd like. As a bonus, the amount of stretching and squishing can be applied to a vertex channel and read in custom shaders for further dynamic effects.  
 **Note:** Stretch vertex channel writing is currently disabled as it breaks skinned modifiers. Skinned meshes store UV info in a different vertex buffer so need to add support for writing to secondary vertex buffer.
 
 <br/>

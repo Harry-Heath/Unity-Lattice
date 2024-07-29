@@ -7,7 +7,6 @@ Just ironing out a few kinks at the moment and have some TODOs left. But feel fr
     <img align="center" src=".github/Squash%20Example.webp" alt="A car being squashed by anvils"/>
 </div>
 <br/>
-<br/>
 
 # Lattice Deformer for Unity
 

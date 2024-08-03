@@ -8,6 +8,9 @@ namespace Lattice
 	[ExecuteAlways, DisallowMultipleComponent]
 	public class LatticeModifier : MonoBehaviour
 	{
+		private const GraphicsBuffer.Target BufferTargets = GraphicsBuffer.Target.Raw 
+			| GraphicsBuffer.Target.CopySource | GraphicsBuffer.Target.CopyDestination;
+
 		#region Fields
 
 		[SerializeField] private Mesh _targetMesh;
@@ -17,6 +20,7 @@ namespace Lattice
 		private Mesh _mesh;
 		private MeshInfo _meshInfo;
 		private MeshFilter _meshFilter;
+		private MeshRenderer _meshRenderer;
 
 		private GraphicsBuffer _copyBuffer;
 		private GraphicsBuffer _vertexBuffer;
@@ -60,7 +64,7 @@ namespace Lattice
 		/// <summary>
 		/// Whether the component is valid and can be applied without errors.
 		/// </summary>
-		public virtual bool IsValid => _vertexBuffer != null && _copyBuffer != null;
+		public bool IsValid => _vertexBuffer != null && _copyBuffer != null;
 
 		/// <summary>
 		/// Retrieves the mesh filter on the current object.
@@ -68,6 +72,13 @@ namespace Lattice
 		private MeshFilter MeshFilter => (_meshFilter == null)
 			? _meshFilter = GetComponent<MeshFilter>()
 			: _meshFilter;
+
+		/// <summary>
+		/// Retrieves the mesh renderer of the current object.
+		/// </summary>
+		protected virtual Renderer Renderer => (_meshRenderer == null)
+			? _meshRenderer = GetComponent<MeshRenderer>()
+			: _meshRenderer;
 
 		#endregion
 
@@ -162,7 +173,7 @@ namespace Lattice
 			_mesh = Instantiate(_targetMesh);
 			_mesh.hideFlags |= HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
 			_mesh.name = _targetMesh.name + " (Lattice)";
-			_mesh.vertexBufferTarget |= GraphicsBuffer.Target.Raw | GraphicsBuffer.Target.CopySource | GraphicsBuffer.Target.CopyDestination;
+			_mesh.vertexBufferTarget |= BufferTargets;
 
 			// Add stretch and squish vertex channel
 			Vector2[] stretch = new Vector2[_mesh.vertexCount];
@@ -183,7 +194,7 @@ namespace Lattice
 			// Create copy of vertex buffer
 			// Will be used for resetting to original every frame
 			_copyBuffer = new(
-				(GraphicsBuffer.Target.Raw | GraphicsBuffer.Target.CopySource | GraphicsBuffer.Target.CopyDestination),
+				BufferTargets,
 				_meshInfo.VertexCount,
 				_meshInfo.BufferStride
 			);
@@ -200,6 +211,14 @@ namespace Lattice
 			{
 				ApplyMesh();
 			}
+		}
+
+		private void LateUpdate()
+		{
+			if (!_ranThisFrame && IsValid && Renderer.isVisible)
+			{
+				Enqueue();
+			}
 			_ranThisFrame = false;
 		}
 
@@ -207,21 +226,14 @@ namespace Lattice
 		{
 			Initialise();
 			ApplyMesh();
+			Enqueue();
+			_ranThisFrame = true;
 		}
 
 		private void OnDisable()
 		{
 			ResetMesh();
 			Release();
-		}
-
-		private void OnWillRenderObject()
-		{
-			if (IsValid && !_ranThisFrame)
-			{
-				_ranThisFrame = true;
-				Enqueue();
-			}
 		}
 
 		#endregion

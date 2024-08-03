@@ -172,6 +172,7 @@ void Deform(uint id : SV_DispatchThreadID)
     float3 originalPosition = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
     float3 originalNormal   = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
     float3 originalTangent  = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
+    float2 originalStretch  = asfloat(VertexBuffer.Load2(id * BufferStride + StretchOffset));
     float3 originalBinormal = cross(originalNormal, originalTangent);
 
 	// Calculate new position
@@ -201,7 +202,7 @@ void Deform(uint id : SV_DispatchThreadID)
 	// Determine stretch
     float stretchTangent  = length(tangentPosition - position) * 100;
     float stretchBinormal = length(binormalPosition - position) * 100;
-    float2 stretch = float2(stretchTangent, stretchBinormal);
+    float2 stretch = originalStretch * float2(stretchTangent, stretchBinormal);
 
 	// Update vertex buffer
     VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(position));

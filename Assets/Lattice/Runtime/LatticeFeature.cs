@@ -213,7 +213,7 @@ namespace Lattice
 
 		private static void ApplySkinnedModifier(CommandBuffer cmd, SkinnedLatticeModifier modifier)
 		{
-			if (modifier == null || !modifier.IsValid) return;
+			if (modifier == null || !modifier.IsSkinnedValid) return;
 
 			// Enable or disable high quality deformations
 			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);

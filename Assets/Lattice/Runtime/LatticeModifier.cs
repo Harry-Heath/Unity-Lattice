@@ -22,6 +22,7 @@ namespace Lattice
 		private MeshFilter _meshFilter;
 		private MeshRenderer _meshRenderer;
 
+		private bool _multipleBuffers;
 		private GraphicsBuffer _copyBuffer;
 		private GraphicsBuffer _vertexBuffer;
 		private GraphicsBuffer _stretchBuffer;
@@ -41,6 +42,11 @@ namespace Lattice
 		/// Vertex information about this mesh.
 		/// </summary>
 		public MeshInfo MeshInfo => _meshInfo;
+
+		/// <summary>
+		/// Whether the mesh uses multiple vertex buffer streams.
+		/// </summary>
+		public bool MultipleBuffers => _multipleBuffers;
 
 		/// <summary>
 		/// A copy of this mesh's vertex buffer.
@@ -201,8 +207,9 @@ namespace Lattice
 			_meshInfo.StretchOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.TexCoord3);
 
 			// Get vertex buffers
-			_vertexBuffer  = _mesh.GetVertexBuffer(0);
-			_stretchBuffer = _mesh.GetVertexBuffer(stretchStream);
+			_multipleBuffers = stretchStream != 0;
+			_vertexBuffer    = _mesh.GetVertexBuffer(0);
+			_stretchBuffer   = _mesh.GetVertexBuffer(stretchStream);
 
 			// Create copy of vertex buffer
 			// Will be used for resetting to original every frame

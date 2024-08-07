@@ -8,7 +8,8 @@ namespace Lattice
 	/// </summary>
 	public static class LatticeShaderProperties
 	{
-		public static readonly GlobalKeyword HighQualityKeyword = GlobalKeyword.Create("LATTICE_HIGH_QUALITY");
+		public static readonly GlobalKeyword HighQualityKeyword     = GlobalKeyword.Create("LATTICE_HIGH_QUALITY");
+		public static readonly GlobalKeyword MultipleBuffersKeyword = GlobalKeyword.Create("LATTICE_MULTIPLE_BUFFERS");
 
 		public static readonly int VertexCountId       = Shader.PropertyToID("VertexCount");
 		public static readonly int BufferStrideId      = Shader.PropertyToID("BufferStride");

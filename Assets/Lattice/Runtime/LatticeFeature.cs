@@ -145,21 +145,25 @@ namespace Lattice
 
 			// Enable or disable high quality deformations
 			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);
+			cmd.SetKeyword(MultipleBuffersKeyword, modifier.MultipleBuffers);
 
 			// Copy original buffer back onto vertex buffer
 			cmd.CopyBuffer(modifier.CopyBuffer, modifier.VertexBuffer);
 
 			// Set vertex buffers
 			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.VertexBuffer);
-			cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
-			cmd.SetComputeBufferParam(_compute, 1, StretchBufferId, modifier.StretchBuffer);
+			if (modifier.MultipleBuffers)
+			{
+				cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
+			}
 
 			// Setup mesh info
 			MeshInfo info = modifier.MeshInfo;
 			SetMeshInfo(cmd, info);
 
 			// Reset stretch
-			//cmd.DispatchCompute(_compute, 1, info.VertexCount / (int)_resetGroupSize + 1, 1, 1);
+			cmd.SetComputeBufferParam(_compute, 1, StretchBufferId, modifier.StretchBuffer);
+			cmd.DispatchCompute(_compute, 1, info.VertexCount / (int)_resetGroupSize + 1, 1, 1);
 
 			// Apply lattices
 			Matrix4x4 localToWorld = modifier.LocalToWorld;
@@ -217,10 +221,14 @@ namespace Lattice
 
 			// Enable or disable high quality deformations
 			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);
+			cmd.SetKeyword(MultipleBuffersKeyword, modifier.MultipleBuffers);
 
 			// Set vertex buffers
 			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.SkinnedVertexBuffer);
-			cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
+			if (modifier.MultipleBuffers)
+			{
+				cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
+			}
 
 			// Setup mesh info
 			MeshInfo info = modifier.MeshInfo;

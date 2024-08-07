@@ -1,21 +1,26 @@
 #pragma kernel Deform
 
 #pragma multi_compile __ LATTICE_HIGH_QUALITY
+#pragma multi_compile __ LATTICE_SKINNED
 
 // Vertex buffer properties
 uint VertexCount;
+
+RWByteAddressBuffer VertexBuffer;
 uint BufferStride;
 uint PositionOffset;
 uint NormalOffset;
 uint TangentOffset;
+
+RWByteAddressBuffer StretchBuffer;
+uint StretchStride;
 uint StretchOffset;
-RWByteAddressBuffer VertexBuffer;
 
 // Lattice properties
+StructuredBuffer<float3> LatticeBuffer;
 float4x4 ObjectToLattice;
 float4x4 LatticeToObject;
 uint3 LatticeResolution;
-StructuredBuffer<float3> LatticeBuffer;
 
 /// Retrieves a lattice handle's offset.
 float3 GetOffset(int3 handle)
@@ -172,7 +177,11 @@ void Deform(uint id : SV_DispatchThreadID)
     float3 originalPosition = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
     float3 originalNormal   = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
     float3 originalTangent  = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
-    float2 originalStretch  = asfloat(VertexBuffer.Load2(id * BufferStride + StretchOffset));
+#ifdef LATTICE_SKINNED
+    float2 originalStretch  = asfloat(StretchBuffer.Load2(id * StretchStride + StretchOffset));
+#else
+    float2 originalStretch = float2(1, 1);
+#endif
     float3 originalBinormal = cross(originalNormal, originalTangent);
 
 	// Calculate new position
@@ -208,5 +217,5 @@ void Deform(uint id : SV_DispatchThreadID)
     VertexBuffer.Store3(id * BufferStride + PositionOffset, asuint(position));
     VertexBuffer.Store3(id * BufferStride + NormalOffset,   asuint(normal));
     VertexBuffer.Store3(id * BufferStride + TangentOffset,  asuint(tangent));
-    //VertexBuffer.Store2(id * BufferStride + StretchOffset,  asuint(stretch));
+    StretchBuffer.Store2(id * StretchStride + StretchOffset, asuint(stretch));
 }

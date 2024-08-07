@@ -8,6 +8,7 @@
 	{
 		public int VertexCount;
 		public int BufferStride;
+		public int StretchStride;
 		public int PositionOffset;
 		public int NormalOffset;
 		public int TangentOffset;

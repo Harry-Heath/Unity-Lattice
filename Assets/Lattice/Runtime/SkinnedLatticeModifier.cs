@@ -93,7 +93,7 @@ namespace Lattice
 			if (MeshRenderer != null && MeshRenderer.rootBone != null)
 			{
 				// Skinning will apply transformations relative to root bone,
-				// so we need to create a post transform local to world 
+				// so we need to create a post skinned local to world 
 				_skinnedLocalToWorld = Matrix4x4.TRS(MeshRenderer.rootBone.position, 
 					MeshRenderer.rootBone.rotation, Vector3.one);
 			}

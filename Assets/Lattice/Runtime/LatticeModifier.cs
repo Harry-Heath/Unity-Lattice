@@ -24,6 +24,7 @@ namespace Lattice
 
 		private GraphicsBuffer _copyBuffer;
 		private GraphicsBuffer _vertexBuffer;
+		private GraphicsBuffer _stretchBuffer;
 		private bool _ranThisFrame = false;
 
 		#endregion
@@ -51,6 +52,11 @@ namespace Lattice
 		public GraphicsBuffer VertexBuffer => _vertexBuffer;
 
 		/// <summary>
+		/// The mesh's stretch buffer.
+		/// </summary>
+		public GraphicsBuffer StretchBuffer => _stretchBuffer;
+
+		/// <summary>
 		/// The mesh's local to world transform matrix.
 		/// </summary>
 		public Matrix4x4 LocalToWorld => transform.localToWorldMatrix;
@@ -67,18 +73,18 @@ namespace Lattice
 		public bool IsValid => _vertexBuffer != null && _copyBuffer != null;
 
 		/// <summary>
-		/// Retrieves the mesh filter on the current object.
-		/// </summary>
-		private MeshFilter MeshFilter => (_meshFilter == null)
-			? _meshFilter = GetComponent<MeshFilter>()
-			: _meshFilter;
-
-		/// <summary>
 		/// Retrieves the mesh renderer of the current object.
 		/// </summary>
 		protected virtual Renderer Renderer => (_meshRenderer == null)
 			? _meshRenderer = GetComponent<MeshRenderer>()
 			: _meshRenderer;
+
+		/// <summary>
+		/// Retrieves the mesh filter on the current object.
+		/// </summary>
+		private MeshFilter MeshFilter => (_meshFilter == null)
+			? _meshFilter = GetComponent<MeshFilter>()
+			: _meshFilter;
 
 		#endregion
 
@@ -115,6 +121,9 @@ namespace Lattice
 
 			_vertexBuffer?.Release();
 			_vertexBuffer = null;
+
+			_stretchBuffer?.Release();
+			_stretchBuffer = null;
 
 			_mesh = null;
 		}
@@ -179,17 +188,20 @@ namespace Lattice
 			Vector2[] stretch = new Vector2[_mesh.vertexCount];
 			Array.Fill(stretch, Vector2.one);
 			_mesh.SetUVs(3, stretch);
+			int stretchStream = _mesh.GetVertexAttributeStream(VertexAttribute.TexCoord3);
 
 			// Get mesh information
 			_meshInfo.VertexCount    = _mesh.vertexCount;
 			_meshInfo.BufferStride   = _mesh.GetVertexBufferStride(0);
+			_meshInfo.StretchStride  = _mesh.GetVertexBufferStride(stretchStream);
 			_meshInfo.PositionOffset = _mesh.GetVertexAttributeOffset(VertexAttribute.Position);
 			_meshInfo.NormalOffset   = _mesh.GetVertexAttributeOffset(VertexAttribute.Normal);
 			_meshInfo.TangentOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.Tangent);
 			_meshInfo.StretchOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.TexCoord3);
 
 			// Get vertex buffer
-			_vertexBuffer = _mesh.GetVertexBuffer(0);
+			_vertexBuffer  = _mesh.GetVertexBuffer(0);
+			_stretchBuffer = _mesh.GetVertexBuffer(stretchStream);
 
 			// Create copy of vertex buffer
 			// Will be used for resetting to original every frame

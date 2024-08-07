@@ -124,6 +124,9 @@ namespace Lattice
 			// Get command buffer
 			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifiers");
 
+			// Disable skinned keyword
+			cmd.SetKeyword(SkinnedKeyword, false);
+
 			// Apply all modifiers
 			for (int i = 0; i < _modifiers.Count; i++)
 			{
@@ -150,6 +153,7 @@ namespace Lattice
 
 			// Set vertex buffer
 			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.VertexBuffer);
+			cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
 
 			// Setup mesh info
 			MeshInfo info = modifier.MeshInfo;
@@ -197,6 +201,9 @@ namespace Lattice
 			// Get command buffer
 			CommandBuffer cmd = CommandBufferPool.Get("Skinned Lattice Modifiers");
 
+			// Enable skinned keyword
+			cmd.SetKeyword(SkinnedKeyword, true);
+
 			// Apply all modifiers
 			for (int i = 0; i < _skinnedModifiers.Count; i++)
 			{
@@ -220,6 +227,7 @@ namespace Lattice
 
 			// Set vertex buffer
 			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.SkinnedVertexBuffer);
+			cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
 
 			// Setup mesh info
 			MeshInfo info = modifier.MeshInfo;
@@ -261,6 +269,7 @@ namespace Lattice
 		{
 			cmd.SetComputeIntParam(_compute, VertexCountId,    info.VertexCount);
 			cmd.SetComputeIntParam(_compute, BufferStrideId,   info.BufferStride);
+			cmd.SetComputeIntParam(_compute, StretchStrideId,  info.StretchStride);
 			cmd.SetComputeIntParam(_compute, PositionOffsetId, info.PositionOffset);
 			cmd.SetComputeIntParam(_compute, NormalOffsetId,   info.NormalOffset);
 			cmd.SetComputeIntParam(_compute, TangentOffsetId,  info.TangentOffset);

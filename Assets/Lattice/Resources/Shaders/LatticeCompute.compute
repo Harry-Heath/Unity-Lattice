@@ -1,7 +1,7 @@
 #pragma kernel Deform
+#pragma kernel Reset
 
 #pragma multi_compile __ LATTICE_HIGH_QUALITY
-#pragma multi_compile __ LATTICE_SKINNED
 
 // Vertex buffer properties
 uint VertexCount;
@@ -177,11 +177,7 @@ void Deform(uint id : SV_DispatchThreadID)
     float3 originalPosition = asfloat(VertexBuffer.Load3(id * BufferStride + PositionOffset));
     float3 originalNormal   = asfloat(VertexBuffer.Load3(id * BufferStride + NormalOffset));
     float3 originalTangent  = asfloat(VertexBuffer.Load3(id * BufferStride + TangentOffset));
-#ifdef LATTICE_SKINNED
     float2 originalStretch  = asfloat(StretchBuffer.Load2(id * StretchStride + StretchOffset));
-#else
-    float2 originalStretch = float2(1, 1);
-#endif
     float3 originalBinormal = cross(originalNormal, originalTangent);
 
 	// Calculate new position
@@ -218,4 +214,15 @@ void Deform(uint id : SV_DispatchThreadID)
     VertexBuffer.Store3(id * BufferStride + NormalOffset,   asuint(normal));
     VertexBuffer.Store3(id * BufferStride + TangentOffset,  asuint(tangent));
     StretchBuffer.Store2(id * StretchStride + StretchOffset, asuint(stretch));
+}
+
+/// Kernel to reset stretch values of a mesh.
+[numthreads(32, 1, 1)]
+void Reset(uint id : SV_DispatchThreadID)
+{
+    if (id >= VertexCount)
+        return;
+    
+    const uint2 one = asuint(float2(1, 1));
+    StretchBuffer.Store2(id * StretchStride + StretchOffset, one);
 }

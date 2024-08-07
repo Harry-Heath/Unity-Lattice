@@ -25,6 +25,7 @@ namespace Lattice
 		private GraphicsBuffer _copyBuffer;
 		private GraphicsBuffer _vertexBuffer;
 		private GraphicsBuffer _stretchBuffer;
+
 		private bool _ranThisFrame = false;
 
 		#endregion
@@ -199,7 +200,7 @@ namespace Lattice
 			_meshInfo.TangentOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.Tangent);
 			_meshInfo.StretchOffset  = _mesh.GetVertexAttributeOffset(VertexAttribute.TexCoord3);
 
-			// Get vertex buffer
+			// Get vertex buffers
 			_vertexBuffer  = _mesh.GetVertexBuffer(0);
 			_stretchBuffer = _mesh.GetVertexBuffer(stretchStream);
 

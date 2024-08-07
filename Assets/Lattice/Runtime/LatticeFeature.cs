@@ -22,10 +22,9 @@ namespace Lattice
 		private const string ComputeShaderName = "Shaders/LatticeCompute";
 
 		private static bool _initialised = false;
-
 		private static ComputeShader _compute;
-		private static uint _computeGroupSize;
-
+		private static uint _resetGroupSize;
+		private static uint _deformGroupSize;
 		private static ComputeBuffer _latticeBuffer;
 		private static readonly int[] _latticeResolution = new int[3];
 
@@ -75,7 +74,8 @@ namespace Lattice
 			_latticeBuffer = new(MaxHandles, 3 * sizeof(float));
 
 			// Setup compute
-			_compute.GetKernelThreadGroupSizes(0, out _computeGroupSize, out uint _, out uint _);
+			_compute.GetKernelThreadGroupSizes(0, out _deformGroupSize, out uint _, out uint _);
+			_compute.GetKernelThreadGroupSizes(1, out _resetGroupSize, out uint _, out uint _);
 			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
 
 			// Add to player loop
@@ -118,14 +118,12 @@ namespace Lattice
 			// Setup compute - only needed here in development
 			// These two calls are only here because editing the compute shader will cause
 			// the asset to refresh and these values will be lost.
-			_compute.GetKernelThreadGroupSizes(0, out _computeGroupSize, out uint _, out uint _);
+			_compute.GetKernelThreadGroupSizes(0, out _deformGroupSize, out uint _, out uint _);
+			_compute.GetKernelThreadGroupSizes(0, out _resetGroupSize, out uint _, out uint _);
 			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
 
 			// Get command buffer
 			CommandBuffer cmd = CommandBufferPool.Get("Lattice Modifiers");
-
-			// Disable skinned keyword
-			cmd.SetKeyword(SkinnedKeyword, false);
 
 			// Apply all modifiers
 			for (int i = 0; i < _modifiers.Count; i++)
@@ -151,13 +149,17 @@ namespace Lattice
 			// Copy original buffer back onto vertex buffer
 			cmd.CopyBuffer(modifier.CopyBuffer, modifier.VertexBuffer);
 
-			// Set vertex buffer
+			// Set vertex buffers
 			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.VertexBuffer);
 			cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
+			cmd.SetComputeBufferParam(_compute, 1, StretchBufferId, modifier.StretchBuffer);
 
 			// Setup mesh info
 			MeshInfo info = modifier.MeshInfo;
 			SetMeshInfo(cmd, info);
+
+			// Reset stretch
+			//cmd.DispatchCompute(_compute, 1, info.VertexCount / (int)_resetGroupSize + 1, 1, 1);
 
 			// Apply lattices
 			Matrix4x4 localToWorld = modifier.LocalToWorld;
@@ -184,7 +186,7 @@ namespace Lattice
 				cmd.SetBufferData(_latticeBuffer, lattice.Offsets);
 
 				// Apply lattice
-				cmd.DispatchCompute(_compute, 0, info.VertexCount / (int)_computeGroupSize + 1, 1, 1);
+				cmd.DispatchCompute(_compute, 0, info.VertexCount / (int)_deformGroupSize + 1, 1, 1);
 			}
 		}
 
@@ -192,17 +194,8 @@ namespace Lattice
 		{
 			if (_skinnedModifiers.Count == 0 || _latticeBuffer == null) return;
 
-			// Setup compute - only needed here in development
-			// These two calls are only here because editing the compute shader will cause
-			// the asset to refresh and these values will be lost.
-			_compute.GetKernelThreadGroupSizes(0, out _computeGroupSize, out uint _, out uint _);
-			_compute.SetBuffer(0, LatticeBufferId, _latticeBuffer);
-
 			// Get command buffer
 			CommandBuffer cmd = CommandBufferPool.Get("Skinned Lattice Modifiers");
-
-			// Enable skinned keyword
-			cmd.SetKeyword(SkinnedKeyword, true);
 
 			// Apply all modifiers
 			for (int i = 0; i < _skinnedModifiers.Count; i++)
@@ -225,7 +218,7 @@ namespace Lattice
 			// Enable or disable high quality deformations
 			cmd.SetKeyword(HighQualityKeyword, modifier.HighQuality);
 
-			// Set vertex buffer
+			// Set vertex buffers
 			cmd.SetComputeBufferParam(_compute, 0, VertexBufferId, modifier.SkinnedVertexBuffer);
 			cmd.SetComputeBufferParam(_compute, 0, StretchBufferId, modifier.StretchBuffer);
 
@@ -258,7 +251,7 @@ namespace Lattice
 				cmd.SetBufferData(_latticeBuffer, lattice.Offsets);
 
 				// Apply lattice
-				cmd.DispatchCompute(_compute, 0, info.VertexCount / (int)_computeGroupSize + 1, 1, 1);
+				cmd.DispatchCompute(_compute, 0, info.VertexCount / (int)_deformGroupSize + 1, 1, 1);
 			}
 		}
 

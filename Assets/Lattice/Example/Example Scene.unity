@@ -599,7 +599,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[2]
       value: 
-      objectReference: {fileID: 2100000, guid: 9c93280c8542bdc429a67a8172ab177f, type: 2}
+      objectReference: {fileID: 2100000, guid: 91b72e3736a27e54491156b914d26273, type: 2}
     - target: {fileID: -6400281290468069383, guid: 4acd007a1837015409f185b0df529b00,
         type: 3}
       propertyPath: m_Mesh
@@ -2629,7 +2629,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: -0.14179277, y: 0.285223, z: -0.013095379}
+  offset: {x: -0.14477211, y: 0.27432013, z: -0.039880574}
 --- !u!4 &1146315642
 Transform:
   m_ObjectHideFlags: 1
@@ -3588,7 +3588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62c05467019ae884d86f7e09213efda5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0.1572156, y: 0.0935297, z: 0.030949235}
+  offset: {x: 0.16146624, y: 0.10016513, z: 0.043254375}
 --- !u!4 &1686016630
 Transform:
   m_ObjectHideFlags: 1

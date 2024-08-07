@@ -1,6 +1,6 @@
 
 ## WIP
-Just ironing out a few kinks at the moment and have some TODOs left. But feel free to take a look around.
+Just ironing out a few kinks at the moment and have some TODOs left. But feel free to take a look around. I will likely convert this to a package structure rather than project soon and separate examples and tests into another repository.
 
 <br/>
 <div align="center">
@@ -22,12 +22,11 @@ Lattice modifiers can be applied to both static and skinned meshes. When it come
 
 ### Compute shader based
 
-Deformations are done using compute shaders, so performance is equivalent to GPU skinning. However, like skinning, meshes affected by lattices do not support instancing.
+Deformations are done using compute shaders, so performance is about on par with GPU skinning. The more lattices you add though, the more performance will be hit. Like with skinning, meshes with lattice modifiers do not support instancing.
 
 ### Material support
 
-Deformation is done seperately from rendering, so you are able to use whatever material you'd like. As a bonus, the amount of stretching and squishing can be applied to a vertex channel and read in custom shaders for further dynamic effects.  
-**Note:** Stretch vertex channel writing is currently disabled as it breaks skinned modifiers. Skinned meshes store UV info in a different vertex buffer so need to add support for writing to secondary vertex buffer.
+Deformation is done before rendering, so you can use whatever material you'd like. As a bonus, the amount of stretching and squishing along UVs can be applied to a vertex channel and read in your own shaders for further dynamic effects.  
 
 <br/>
 <div align="center">
@@ -36,7 +35,6 @@ Deformation is done seperately from rendering, so you are able to use whatever m
 <br/>
 
 ## Known issues
-* Writing the amount of stretch and squish to vertex channel is currently disabled.  
 * Meshes are being processed assuming they have position, normal and tangent data. If they don't have all 3 it may not behave correctly.
 
 ## Example
